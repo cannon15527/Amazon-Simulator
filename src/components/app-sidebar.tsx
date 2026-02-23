@@ -9,13 +9,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Home, ShoppingCart, Package, User, Wand2 } from "lucide-react";
+import { Home, ShoppingCart, Package, User, Wand2, Star } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 const menuItems = [
   { href: "/", label: "Products", icon: Home },
   { href: "/cart", label: "Cart", icon: ShoppingCart },
   { href: "/orders", label: "Orders", icon: Package },
+  { href: "/prime-deals", label: "Prime Deals", icon: Star },
   { href: "/account", label: "Account", icon: User },
   { href: "/ai-description-generator", label: "AI Tool", icon: Wand2 },
 ];

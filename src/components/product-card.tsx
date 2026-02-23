@@ -12,14 +12,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, BadgePercent } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
   product: Product;
+  originalPrice?: number;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, originalPrice }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -50,6 +52,11 @@ export function ProductCard({ product }: ProductCardProps) {
             className="object-cover"
             data-ai-hint={product.imageHint}
           />
+           {originalPrice && (
+            <Badge variant="destructive" className="absolute right-2 top-2 flex items-center gap-1">
+                <BadgePercent className="h-4 w-4" /> 50% OFF
+            </Badge>
+          )}
         </div>
         <div className="p-6 pb-2">
           <CardTitle className="font-headline text-xl">{product.name}</CardTitle>
@@ -59,8 +66,15 @@ export function ProductCard({ product }: ProductCardProps) {
         <CardDescription>{product.description}</CardDescription>
       </CardContent>
       <CardFooter className="flex items-center justify-between bg-secondary/30 p-4">
-        <div className="font-headline text-xl font-bold text-primary">
-          {formatCurrency(product.price)}
+        <div className="flex flex-col items-start">
+            {originalPrice && (
+                <span className="text-sm text-muted-foreground line-through">
+                    {formatCurrency(originalPrice)}
+                </span>
+            )}
+            <div className="font-headline text-xl font-bold text-primary">
+            {formatCurrency(product.price)}
+            </div>
         </div>
         <Button onClick={handleAddToCart} size="sm">
           <ShoppingCart className="mr-2" />
