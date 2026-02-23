@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PaymentDialog } from "@/components/payment-dialog";
 
 export default function CartPage() {
   const { cart, removeFromCart, cartTotal, clearCart } = useCart();
@@ -23,18 +24,19 @@ export default function CartPage() {
   const { addresses, getDefaultAddress } = useAddresses();
   const { toast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>(getDefaultAddress()?.id);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
   
-  const handleCheckout = () => {
+  const processOrder = () => {
     if (cart.length === 0) {
       toast({ variant: "destructive", title: "Cart is empty" });
       return;
     }
     if (balance < cartTotal) {
-      toast({ variant: "destructive", title: "Insufficient funds" });
+      toast({ variant: "destructive", title: "Insufficient funds in your SimuShop wallet." });
       return;
     }
     const shippingAddress = addresses.find(a => a.id === selectedAddressId);
@@ -50,7 +52,20 @@ export default function CartPage() {
     }
   };
 
+  const handleCheckoutClick = () => {
+      if (!selectedAddressId) {
+        toast({ variant: "destructive", title: "No shipping address", description: "Please add or select a shipping address to continue." });
+        return;
+      }
+      if(cartTotal > balance) {
+        toast({ variant: "destructive", title: "Insufficient Funds", description: `You need ${formatCurrency(cartTotal)} in your wallet, but you only have ${formatCurrency(balance)}.` });
+        return;
+      }
+      setIsPaymentDialogOpen(true);
+  }
+
   return (
+    <>
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tight">Shopping Cart</h1>
@@ -142,7 +157,7 @@ export default function CartPage() {
                  </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" size="lg" onClick={handleCheckout} disabled={!selectedAddressId}>
+                <Button className="w-full" size="lg" onClick={handleCheckoutClick} disabled={!selectedAddressId}>
                   <CreditCard className="mr-2" />
                   Place Virtual Order
                 </Button>
@@ -152,5 +167,12 @@ export default function CartPage() {
         </div>
       )}
     </div>
+    <PaymentDialog
+        isOpen={isPaymentDialogOpen}
+        onOpenChange={setIsPaymentDialogOpen}
+        onPaymentSuccess={processOrder}
+        total={cartTotal}
+    />
+    </>
   );
 }
