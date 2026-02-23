@@ -4,11 +4,11 @@ import { usePrime } from "@/hooks/use-prime";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Rocket, Star, XCircle } from "lucide-react";
+import { CheckCircle, Rocket, Star, XCircle, Hourglass } from "lucide-react";
 import { PRIME_COST } from "@/lib/constants";
 
 export default function PrimePage() {
-  const { isPrime, subscribe, unsubscribe } = usePrime();
+  const { isPrime, subscribe, unsubscribe, willCancel } = usePrime();
   const { toast } = useToast();
 
   const handleSubscribe = () => {
@@ -28,10 +28,6 @@ export default function PrimePage() {
   
   const handleUnsubscribe = () => {
     unsubscribe();
-    toast({
-        title: "Subscription Cancelled",
-        description: "Your SimuShop Prime membership has been cancelled.",
-    })
   }
 
   const formatCurrency = (amount: number) => {
@@ -66,12 +62,27 @@ export default function PrimePage() {
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span>The satisfaction of being a premium virtual customer.</span>
               </li>
+               {willCancel && (
+                <li className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+                    <Hourglass className="h-5 w-5" />
+                    <span>Your subscription will be cancelled at the end of the cycle.</span>
+                </li>
+               )}
             </ul>
           </CardContent>
           <CardFooter>
-            <Button variant="destructive" className="w-full" onClick={handleUnsubscribe}>
-                <XCircle className="mr-2 h-5 w-5" />
-                Cancel Subscription
+            <Button variant="destructive" className="w-full" onClick={handleUnsubscribe} disabled={willCancel}>
+                {willCancel ? (
+                    <>
+                        <Hourglass className="mr-2 h-5 w-5" />
+                        Cancellation Pending
+                    </>
+                ) : (
+                    <>
+                        <XCircle className="mr-2 h-5 w-5" />
+                        Cancel Subscription
+                    </>
+                )}
             </Button>
           </CardFooter>
         </Card>

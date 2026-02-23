@@ -10,6 +10,7 @@ interface PrimeContextType {
   subscribe: () => boolean;
   unsubscribe: () => void;
   timeLeft: number | null;
+  willCancel: boolean;
 }
 
 export const PrimeContext = createContext<PrimeContextType | undefined>(
@@ -18,11 +19,13 @@ export const PrimeContext = createContext<PrimeContextType | undefined>(
 
 const LOCAL_STORAGE_KEY_STATUS = "simushop_prime_status";
 const LOCAL_STORAGE_KEY_RENEWAL = "simushop_prime_renewal_time";
+const LOCAL_STORAGE_KEY_WILL_CANCEL = "simushop_prime_will_cancel";
 
 export function PrimeProvider({ children }: { children: ReactNode }) {
   const [isPrime, setIsPrime] = useState(false);
   const [renewalTime, setRenewalTime] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [willCancel, setWillCancel] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const { deduct } = useWallet();
   const { toast } = useToast();
@@ -31,8 +34,12 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
     try {
       const storedPrimeStatus = localStorage.getItem(LOCAL_STORAGE_KEY_STATUS);
       const storedRenewalTime = localStorage.getItem(LOCAL_STORAGE_KEY_RENEWAL);
+      const storedWillCancel = localStorage.getItem(LOCAL_STORAGE_KEY_WILL_CANCEL);
       if (storedPrimeStatus) {
         setIsPrime(JSON.parse(storedPrimeStatus));
+      }
+      if (storedWillCancel) {
+        setWillCancel(JSON.parse(storedWillCancel));
       }
       if (storedRenewalTime) {
         const parsedRenewal = JSON.parse(storedRenewalTime);
@@ -41,6 +48,7 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
             setRenewalTime(parsedRenewal);
         } else {
             setIsPrime(false); // Expired
+            setWillCancel(false);
         }
       }
     } catch (error) {
@@ -52,34 +60,44 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isHydrated) {
       localStorage.setItem(LOCAL_STORAGE_KEY_STATUS, JSON.stringify(isPrime));
+      localStorage.setItem(LOCAL_STORAGE_KEY_WILL_CANCEL, JSON.stringify(willCancel));
       if (renewalTime && isPrime) {
           localStorage.setItem(LOCAL_STORAGE_KEY_RENEWAL, JSON.stringify(renewalTime));
       } else {
           localStorage.removeItem(LOCAL_STORAGE_KEY_RENEWAL);
       }
     }
-  }, [isPrime, renewalTime, isHydrated]);
+  }, [isPrime, renewalTime, isHydrated, willCancel]);
 
   const subscribe = () => {
     if (deduct(PRIME_COST)) {
       setIsPrime(true);
+      setWillCancel(false);
       setRenewalTime(Date.now() + PRIME_RENEWAL_SECONDS * 1000);
       return true;
     }
     return false;
   };
 
-  const unsubscribe = useCallback(() => {
+  const cancelSubscriptionNow = useCallback(() => {
     setIsPrime(false);
     setRenewalTime(null);
     setTimeLeft(null);
+    setWillCancel(false);
   }, []);
+
+  const unsubscribe = () => {
+    setWillCancel(true);
+    toast({
+        title: "Cancellation Pending",
+        description: "Your Prime membership will be cancelled at the end of this cycle."
+    })
+  };
   
   useEffect(() => {
     if (!isHydrated || !isPrime || !renewalTime) {
-        setTimeLeft(null);
         if (isPrime) { // Sub was expired on load
-            unsubscribe();
+            cancelSubscriptionNow();
         }
         return;
     };
@@ -90,14 +108,20 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
         setTimeLeft(remaining);
 
         if (remaining <= 0) {
-            if (deduct(PRIME_COST)) {
+            if (willCancel) {
+                cancelSubscriptionNow();
+                toast({
+                    title: "Subscription Cancelled",
+                    description: "Your SimuShop Prime membership has expired.",
+                });
+            } else if (deduct(PRIME_COST)) {
                 setRenewalTime(Date.now() + PRIME_RENEWAL_SECONDS * 1000);
                 toast({
                     title: "Prime Renewed",
                     description: "Your SimuShop Prime membership has been renewed."
                 });
             } else {
-                unsubscribe();
+                cancelSubscriptionNow();
                 toast({
                     variant: "destructive",
                     title: "Prime Renewal Failed",
@@ -109,14 +133,14 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
 
     return () => clearInterval(interval);
 
-  }, [isHydrated, isPrime, renewalTime, deduct, toast, unsubscribe]);
+  }, [isHydrated, isPrime, renewalTime, deduct, toast, cancelSubscriptionNow, willCancel]);
 
   if (!isHydrated) {
       return null;
   }
 
   return (
-    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft }}>
+    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft, willCancel }}>
       {children}
     </PrimeContext.Provider>
   );
