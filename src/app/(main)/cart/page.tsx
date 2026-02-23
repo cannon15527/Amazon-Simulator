@@ -40,7 +40,7 @@ export default function CartPage() {
       return;
     }
     if (balance < cartTotal) {
-      toast({ variant: "destructive", title: "Insufficient funds in your SimuShop wallet." });
+      toast({ variant: "destructive", title: "Insufficient funds in your Amazon wallet." });
       return;
     }
     const shippingAddress = addresses.find(a => a.id === selectedAddressId);
@@ -62,8 +62,8 @@ export default function CartPage() {
       setSelectedAddressId(defaultAddress.id);
     }
     
-    const paybudSuccess = searchParams.get('paybud_success') === 'true';
-    if (paybudSuccess && cart.length > 0 && selectedAddressId) {
+    const paypalSuccess = searchParams.get('paypal_success') === 'true';
+    if (paypalSuccess && cart.length > 0 && selectedAddressId) {
       setIsProcessing(true);
       // Clean the URL to prevent re-processing on refresh
       router.replace('/cart');

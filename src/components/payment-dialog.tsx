@@ -73,8 +73,8 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
     handlePayment();
   }
 
-  function handlePayBudRedirect() {
-    router.push(`/paybud-checkout?total=${total}`);
+  function handlePayPalRedirect() {
+    router.push(`/paypal-checkout?total=${total}`);
   }
 
   return (
@@ -91,8 +91,8 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
             <TabsTrigger value="card">
               <CreditCard className="mr-2 h-4 w-4" /> Card
             </TabsTrigger>
-            <TabsTrigger value="paybud">
-              <Wallet className="mr-2 h-4 w-4" /> PayBud
+            <TabsTrigger value="paypal">
+              <Wallet className="mr-2 h-4 w-4" /> PayPal
             </TabsTrigger>
           </TabsList>
           <TabsContent value="card">
@@ -159,10 +159,10 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
               </form>
             </Form>
           </TabsContent>
-          <TabsContent value="paybud">
+          <TabsContent value="paypal">
              <div className="space-y-4 pt-4 text-center">
-              <p className="text-sm text-muted-foreground">You'll be redirected to PayBud to complete your purchase securely.</p>
-              <Button type="button" className="w-full" size="lg" onClick={handlePayBudRedirect}>
+              <p className="text-sm text-muted-foreground">You'll be redirected to PayPal to complete your purchase securely.</p>
+              <Button type="button" className="w-full" size="lg" onClick={handlePayPalRedirect}>
                 <ExternalLink className="mr-2" />
                 Sign in on external website
               </Button>
