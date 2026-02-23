@@ -67,8 +67,9 @@ export default function CartPage() {
   
   useEffect(() => {
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
+    const financeSuccess = searchParams.get('finance_success') === 'true';
 
-    if (paypalSuccess && cart.length > 0 && selectedAddressId && !processingRef.current) {
+    if ((paypalSuccess || financeSuccess) && cart.length > 0 && selectedAddressId && !processingRef.current) {
       processingRef.current = true;
       setIsProcessing(true);
       setProcessingStatus('processing');

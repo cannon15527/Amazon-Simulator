@@ -21,8 +21,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreditCard, Wallet, ExternalLink } from "lucide-react";
+import { CreditCard, Wallet, ExternalLink, Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 
 const cardFormSchema = z.object({
@@ -41,6 +42,7 @@ interface PaymentDialogProps {
 
 export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }: PaymentDialogProps) {
   const router = useRouter();
+  const showFinancing = total > 5000; // $50 in cents
 
   const cardForm = useForm<z.infer<typeof cardFormSchema>>({
     resolver: zodResolver(cardFormSchema),
@@ -65,6 +67,10 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
     router.push(`/paypal-checkout?total=${total}`);
   }
 
+  function handleFinanceRedirect() {
+    router.push(`/finance-checkout?total=${total}`);
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -75,13 +81,18 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="card" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className={cn("grid w-full", showFinancing ? "grid-cols-3" : "grid-cols-2")}>
             <TabsTrigger value="card">
               <CreditCard className="mr-2 h-4 w-4" /> Card
             </TabsTrigger>
             <TabsTrigger value="paypal">
               <Wallet className="mr-2 h-4 w-4" /> PayPal
             </TabsTrigger>
+            {showFinancing && (
+                <TabsTrigger value="finance">
+                    <Landmark className="mr-2 h-4 w-4" /> Finance
+                </TabsTrigger>
+            )}
           </TabsList>
           <TabsContent value="card">
             <Form {...cardForm}>
@@ -155,6 +166,17 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
               </Button>
              </div>
           </TabsContent>
+           {showFinancing && (
+            <TabsContent value="finance">
+                <div className="space-y-4 pt-4 text-center">
+                    <p className="text-sm text-muted-foreground">You'll be redirected to Affirmative Finance to set up a payment plan.</p>
+                    <Button type="button" className="w-full" size="lg" onClick={handleFinanceRedirect}>
+                        <ExternalLink className="mr-2" />
+                        Continue with Affirmative Finance
+                    </Button>
+                </div>
+            </TabsContent>
+          )}
         </Tabs>
       </DialogContent>
     </Dialog>
