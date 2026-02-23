@@ -4,7 +4,7 @@ import { ShoppingCart } from "lucide-react";
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 group">
-      <div className="p-2 bg-primary rounded-lg text-primary-foreground group-hover:bg-primary/90 transition-colors">
+      <div className="p-2 bg-primary rounded-lg text-primary-foreground group-hover:bg-primary/90 transition-all duration-300 group-hover:scale-105">
         <ShoppingCart className="h-6 w-6" />
       </div>
       <div className="flex flex-col">
