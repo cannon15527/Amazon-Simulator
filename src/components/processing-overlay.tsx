@@ -28,7 +28,7 @@ export function ProcessingOverlay({ show }: { show: boolean }) {
       <div className="relative h-16 w-16">
         <Loader2
           className={cn(
-            "absolute h-full w-full animate-spin text-primary transition-all duration-300",
+            "absolute h-full w-full animate-spin text-primary transition-opacity duration-300",
             isSuccess ? "opacity-0 scale-50" : "opacity-100 scale-100"
           )}
         />
