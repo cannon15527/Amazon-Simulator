@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
@@ -30,6 +30,7 @@ export default function CartPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const processingRef = useRef(false);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -61,26 +62,23 @@ export default function CartPage() {
     if (!selectedAddressId && defaultAddress) {
       setSelectedAddressId(defaultAddress.id);
     }
-    
+  }, [addresses, getDefaultAddress, selectedAddressId]);
+  
+  useEffect(() => {
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
-    let processingTimeout: NodeJS.Timeout;
 
-    if (paypalSuccess && cart.length > 0 && selectedAddressId) {
+    if (paypalSuccess && cart.length > 0 && selectedAddressId && !processingRef.current) {
+      processingRef.current = true;
       setIsProcessing(true);
-      // Clean the URL to prevent re-processing on refresh
       router.replace('/cart');
-      processingTimeout = setTimeout(() => {
+      
+      const processingTimeout = setTimeout(() => {
         processOrder();
         setIsProcessing(false);
+        processingRef.current = false;
       }, 6000);
     }
-
-    return () => {
-        if (processingTimeout) {
-            clearTimeout(processingTimeout);
-        }
-    }
-  }, [addresses, searchParams, cart.length, getDefaultAddress, selectedAddressId, processOrder, router]);
+  }, [searchParams, cart.length, selectedAddressId, processOrder, router]);
 
 
   const handleCheckoutClick = () => {
