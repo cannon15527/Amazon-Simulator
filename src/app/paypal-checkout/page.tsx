@@ -2,8 +2,8 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wallet, ArrowLeft, CreditCard } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Wallet, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,8 @@ export default function PayPalCheckoutPage() {
   const router = useRouter();
   const [total, setTotal] = useState(0);
   const [step, setStep] = useState<'login' | 'card-selection'>('login');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
   useEffect(() => {
     const totalParam = searchParams.get('total');
@@ -48,13 +50,21 @@ export default function PayPalCheckoutPage() {
   };
 
   function onLoginSubmit(values: z.infer<typeof loginFormSchema>) {
-    // In a real app, you'd verify credentials. Here, we just proceed.
-    setStep('card-selection');
+    setIsLoading(true);
+    setTimeout(() => {
+      // In a real app, you'd verify credentials. Here, we just proceed.
+      setStep('card-selection');
+      setIsLoading(false);
+    }, 2000);
   }
   
-  const handleCardSelection = () => {
-    // Redirect back to cart with a success flag
-    router.push('/cart?paypal_success=true');
+  const handleCardSelection = (cardId: string) => {
+    setIsLoading(true);
+    setSelectedCardId(cardId);
+    setTimeout(() => {
+        // Redirect back to cart with a success flag
+        router.push('/cart?paypal_success=true');
+    }, 2000);
   };
 
   const handleCancel = () => {
@@ -94,7 +104,7 @@ export default function PayPalCheckoutPage() {
                                 <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input type="email" placeholder="you@paypal.com" {...field} />
+                                    <Input type="email" placeholder="you@paypal.com" {...field} disabled={isLoading} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
@@ -107,13 +117,14 @@ export default function PayPalCheckoutPage() {
                                 <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" {...field} />
+                                    <Input type="password" {...field} disabled={isLoading} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
                             )}
                         />
-                         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Sign In & Authorize Payment
                         </Button>
                     </form>
@@ -130,8 +141,19 @@ export default function PayPalCheckoutPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                 {fakeCards.map(card => (
-                    <Button key={card.id} variant="outline" className="w-full justify-start h-14" size="lg" onClick={handleCardSelection}>
-                        <CreditCard className="mr-4" />
+                    <Button 
+                        key={card.id} 
+                        variant="outline" 
+                        className="w-full justify-start h-14" 
+                        size="lg" 
+                        onClick={() => handleCardSelection(card.id)}
+                        disabled={isLoading}
+                    >
+                        {isLoading && selectedCardId === card.id ? (
+                            <Loader2 className="mr-4 animate-spin" />
+                        ) : (
+                            <CreditCard className="mr-4" />
+                        )}
                         <div className="text-left">
                             <p className="font-semibold">{card.brand}</p>
                             <p className="text-sm text-muted-foreground">•••• {card.last4}</p>
