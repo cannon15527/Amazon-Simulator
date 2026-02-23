@@ -94,7 +94,7 @@ export default function CartPage() {
             addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
             clearCart();
             setProcessingStatus('success');
-            toast({ title: "Financing Approved!", description: "Your order has been placed." });
+            toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
         } else { // PayPal
             if (balance < orderTotal) {
                 setProcessingStatus('declined');
