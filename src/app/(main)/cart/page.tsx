@@ -14,9 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
+import { ProcessingOverlay } from "@/components/processing-overlay";
 
 export default function CartPage() {
   const { cart, removeFromCart, cartTotal, clearCart } = useCart();
@@ -26,7 +27,9 @@ export default function CartPage() {
   const { toast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>();
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -34,7 +37,6 @@ export default function CartPage() {
   
   const processOrder = useCallback(() => {
     if (cart.length === 0) {
-      // Don't toast if cart is empty, might happen on re-renders
       return;
     }
     if (balance < cartTotal) {
@@ -62,11 +64,15 @@ export default function CartPage() {
     
     const paybudSuccess = searchParams.get('paybud_success') === 'true';
     if (paybudSuccess && cart.length > 0 && selectedAddressId) {
-      processOrder();
+      setIsProcessing(true);
       // Clean the URL to prevent re-processing on refresh
-      window.history.replaceState(null, '', '/cart');
+      router.replace('/cart');
+      setTimeout(() => {
+        processOrder();
+        setIsProcessing(false);
+      }, 6000);
     }
-  }, [addresses, searchParams, cart, getDefaultAddress, selectedAddressId, processOrder]);
+  }, [addresses, searchParams, cart.length, getDefaultAddress, selectedAddressId, processOrder, router]);
 
 
   const handleCheckoutClick = () => {
@@ -83,6 +89,7 @@ export default function CartPage() {
 
   return (
     <>
+    <ProcessingOverlay show={isProcessing} />
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tight">Shopping Cart</h1>
