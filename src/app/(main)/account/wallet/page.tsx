@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { ProcessingOverlay } from "@/components/processing-overlay";
 
 export default function WalletPage() {
   const { balance, addFunds } = useWallet();
@@ -18,10 +19,6 @@ export default function WalletPage() {
 
   const handleAddFunds = (amount: number) => {
     setIsProcessing(true);
-    toast({
-      title: "Processing Transaction",
-      description: "Contacting your virtual bank...",
-    });
 
     setTimeout(() => {
       addFunds(amount);
@@ -30,46 +27,49 @@ export default function WalletPage() {
         description: `${formatCurrency(amount)} has been added to your wallet.`,
       });
       setIsProcessing(false);
-    }, 3500);
+    }, 6000);
   };
   
   const fundAmounts = [1000, 2000, 5000, 10000];
 
   return (
-    <div className="space-y-6">
-      <h2 className="font-headline text-2xl font-semibold">Your Wallet</h2>
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Balance</CardTitle>
-          <CardDescription>This is your available balance for virtual purchases.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-center p-8 bg-secondary rounded-lg">
-            <span className="text-5xl font-bold font-headline">{formatCurrency(balance)}</span>
-          </div>
-          
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-                <PlusCircle className="h-5 w-5 text-muted-foreground"/>
-                <h3 className="text-lg font-semibold">Add Funds</h3>
+    <>
+      <ProcessingOverlay show={isProcessing} />
+      <div className="space-y-6">
+        <h2 className="font-headline text-2xl font-semibold">Your Wallet</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Current Balance</CardTitle>
+            <CardDescription>This is your available balance for virtual purchases.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-center p-8 bg-secondary rounded-lg">
+              <span className="text-5xl font-bold font-headline">{formatCurrency(balance)}</span>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">It's not real money, so go wild. Select an amount to add to your wallet.</p>
-            <div className="flex flex-wrap justify-start gap-4">
-              {fundAmounts.map((amount) => (
-                <Button 
-                  key={amount}
-                  onClick={() => handleAddFunds(amount)} 
-                  size="lg" 
-                  variant="outline"
-                  disabled={isProcessing}
-                >
-                  Add {formatCurrency(amount)}
-                </Button>
-              ))}
+            
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                  <PlusCircle className="h-5 w-5 text-muted-foreground"/>
+                  <h3 className="text-lg font-semibold">Add Funds</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">It's not real money, so go wild. Select an amount to add to your wallet.</p>
+              <div className="flex flex-wrap justify-start gap-4">
+                {fundAmounts.map((amount) => (
+                  <Button 
+                    key={amount}
+                    onClick={() => handleAddFunds(amount)} 
+                    size="lg" 
+                    variant="outline"
+                    disabled={isProcessing}
+                  >
+                    Add {formatCurrency(amount)}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
