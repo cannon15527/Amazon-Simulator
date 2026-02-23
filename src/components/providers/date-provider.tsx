@@ -47,7 +47,8 @@ export function DateProvider({ children }: { children: ReactNode }) {
   }, [isHydrated]);
 
   useEffect(() => {
-    if (isHydrated) {
+    // Only save the date if the user is considered "signed up"
+    if (isHydrated && localStorage.getItem("simushop_has_signed_up") === "true") {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentDate));
     }
   }, [currentDate, isHydrated]);
