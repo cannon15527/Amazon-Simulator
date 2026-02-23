@@ -47,6 +47,54 @@
       "description": "A bottomless bag of assorted snacks",
       "imageUrl": "https://images.unsplash.com/photo-1723110568244-ab6886ad6a77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzbmFjayUyMHZhcmlldHl8ZW58MHx8fHwxNzcxODEzNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "snack variety"
+    },
+    {
+      "id": "9",
+      "description": "A self-typing keyboard",
+      "imageUrl": "https://images.unsplash.com/photo-1587829741301-735eda743496?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWdpYyUyMGtleWJvYXJkfGVufDB8fHx8MTc3MjI0MTM1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "magic keyboard"
+    },
+    {
+      "id": "10",
+      "description": "A pen that writes down your best ideas before you even think of them",
+      "imageUrl": "https://images.unsplash.com/photo-1588805629552-06903930422a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnbG93aW5nJTIwcGVufGVufDB8fHx8MTc3MjI0MTQ1M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "glowing pen"
+    },
+    {
+      "id": "11",
+      "description": "A salt shaker that perfectly seasons any dish",
+      "imageUrl": "https://images.unsplash.com/photo-1516900424230-5b58c538a786?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYW5jeSUyMHNhbHQlMjBzaGFrZXJ8ZW58MHx8fHwxNzcyMjQxNTMwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fancy salt shaker"
+    },
+    {
+      "id": "12",
+      "description": "A mug that keeps your drink at the perfect temperature indefinitely",
+      "imageUrl": "https://images.unsplash.com/photo-1622822452240-3fb3a45c4b88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0aGVybWFsJTIwbXVnfGVufDB8fHx8MTc3MjI0MTU3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "thermal mug"
+    },
+    {
+      "id": "13",
+      "description": "A t-shirt that changes color based on your mood",
+      "imageUrl": "https://images.unsplash.com/photo-1620799140408-edc6d5f9650d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2xvciUyMGNoYW5naW5nJTIwc2hpcnR8ZW58MHx8fHwxNzcyMjQxNjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "color changing shirt"
+    },
+    {
+      "id": "14",
+      "description": "A business suit that is perpetually wrinkle-free",
+      "imageUrl": "https://images.unsplash.com/photo-1594938384955-a05c49b8296a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjcmlzcCUyMHN1aXR8ZW58MHx8fHwxNzcyMjQxNjg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "crisp suit"
+    },
+    {
+      "id": "15",
+      "description": "A single remote to control every device in the universe",
+      "imageUrl": "https://images.unsplash.com/photo-1601944177324-f23674628a2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmdXR1cmlzdGljJTIwcmVtb3RlfGVufDB8fHx8MTc3MjI0MTcyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic remote"
+    },
+    {
+      "id": "16",
+      "description": "A device that records your dreams for later viewing",
+      "imageUrl": "https://images.unsplash.com/photo-1634526569199-3b563606c457?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnbG93aW5nJTIwb3JifGVufDB8fHx8MTc3MjI0MTc4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "glowing orb"
     }
   ]
 }

@@ -4,11 +4,11 @@ import { usePrime } from "@/hooks/use-prime";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Rocket, Star, Timer, XCircle } from "lucide-react";
+import { CheckCircle, Rocket, Star, XCircle } from "lucide-react";
 import { PRIME_COST } from "@/lib/constants";
 
 export default function PrimePage() {
-  const { isPrime, subscribe, unsubscribe, timeLeft } = usePrime();
+  const { isPrime, subscribe, unsubscribe } = usePrime();
   const { toast } = useToast();
 
   const handleSubscribe = () => {
@@ -37,13 +37,6 @@ export default function PrimePage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
-
-  const formatTime = (seconds: number | null) => {
-    if (seconds === null) return '00:00';
-    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const secs = (seconds % 60).toString().padStart(2, '0');
-    return `${mins}:${secs}`;
-  }
 
   return (
     <div className="space-y-6">
@@ -74,13 +67,6 @@ export default function PrimePage() {
                 <span>The satisfaction of being a premium virtual customer.</span>
               </li>
             </ul>
-             <div className="flex items-center justify-between p-4 bg-background/50 rounded-lg mt-6">
-                <div className="flex items-center gap-2">
-                    <Timer className="h-5 w-5 text-muted-foreground" />
-                    <span className="font-medium">Next renewal in:</span>
-                </div>
-                <span className="font-bold text-lg font-mono">{formatTime(timeLeft)}</span>
-            </div>
           </CardContent>
           <CardFooter>
             <Button variant="destructive" className="w-full" onClick={handleUnsubscribe}>

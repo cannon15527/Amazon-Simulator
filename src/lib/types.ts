@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   imageUrl: string;
   imageHint: string;
+  category: string;
 }
 
 export interface Address {
