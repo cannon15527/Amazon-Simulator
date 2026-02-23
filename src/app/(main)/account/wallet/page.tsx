@@ -2,25 +2,38 @@
 
 import { useWallet } from "@/hooks/use-wallet";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { DollarSign, PlusCircle } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function WalletPage() {
   const { balance, addFunds } = useWallet();
   const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
 
   const handleAddFunds = (amount: number) => {
-    addFunds(amount);
+    setIsProcessing(true);
     toast({
-      title: "Funds Added",
-      description: `${formatCurrency(amount)} has been added to your wallet.`,
+      title: "Processing Transaction",
+      description: "Contacting your virtual bank...",
     });
+
+    setTimeout(() => {
+      addFunds(amount);
+      toast({
+        title: "Funds Added",
+        description: `${formatCurrency(amount)} has been added to your wallet.`,
+      });
+      setIsProcessing(false);
+    }, 3500);
   };
+  
+  const fundAmounts = [1000, 2000, 5000, 10000];
 
   return (
     <div className="space-y-6">
@@ -42,18 +55,17 @@ export default function WalletPage() {
             </div>
             <p className="text-sm text-muted-foreground mb-4">It's not real money, so go wild. Select an amount to add to your wallet.</p>
             <div className="flex flex-wrap justify-start gap-4">
-                <Button onClick={() => handleAddFunds(1000)} size="lg" variant="outline">
-                    Add {formatCurrency(1000)}
+              {fundAmounts.map((amount) => (
+                <Button 
+                  key={amount}
+                  onClick={() => handleAddFunds(amount)} 
+                  size="lg" 
+                  variant="outline"
+                  disabled={isProcessing}
+                >
+                  Add {formatCurrency(amount)}
                 </Button>
-                <Button onClick={() => handleAddFunds(2000)} size="lg" variant="outline">
-                    Add {formatCurrency(2000)}
-                </Button>
-                <Button onClick={() => handleAddFunds(5000)} size="lg" variant="outline">
-                    Add {formatCurrency(5000)}
-                </Button>
-                 <Button onClick={() => handleAddFunds(10000)} size="lg" variant="outline">
-                    Add {formatCurrency(10000)}
-                </Button>
+              ))}
             </div>
           </div>
         </CardContent>
