@@ -95,6 +95,78 @@
       "description": "A device that records your dreams for later viewing",
       "imageUrl": "https://images.unsplash.com/photo-1634526569199-3b563606c457?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnbG93aW5nJTIwb3JifGVufDB8fHx8MTc3MjI0MTc4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "glowing orb"
+    },
+    {
+      "id": "17",
+      "description": "A powerful gaming console for next-gen experiences",
+      "imageUrl": "https://images.unsplash.com/photo-1588689115724-a624efec3c93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxnYW1lJTIwY29uc29sZXxlbnwwfHx8fDE3NzE4MjIyNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game console"
+    },
+    {
+      "id": "18",
+      "description": "The next level of console gaming with enhanced power",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1580234759288-fbf3ccdd9a06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwcm8lMjBjb25zb2xlfGVufDB8fHx8MTc3MTgyMjI1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pro console"
+    },
+    {
+      "id": "19",
+      "description": "A sleek and powerful black gaming console",
+      "imageUrl": "https://images.unsplash.com/photo-1637393994956-71758d70c0b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxibGFjayUyMGNvbnNvbGV8ZW58MHx8fHwxNzcxODA0NDkzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "black console"
+    },
+    {
+      "id": "20",
+      "description": "A compact white gaming console for digital gaming",
+      "imageUrl": "https://images.unsplash.com/photo-1561304211-f88bafcc4e22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3aGl0ZSUyMGNvbnNvbGV8ZW58MHx8fHwxNzcxODIyMjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white console"
+    },
+    {
+      "id": "21",
+      "description": "A hybrid gaming console for home and portable play",
+      "imageUrl": "https://images.unsplash.com/photo-1619590530232-da98a822baa5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxoeWJyaWQlMjBjb25zb2xlfGVufDB8fHx8MTc3MTgyMjI1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hybrid console"
+    },
+    {
+      "id": "22",
+      "description": "The fictional next-generation hybrid gaming console",
+      "imageUrl": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmdXR1cmUlMjBjb25zb2xlfGVufDB8fHx8MTc3MTgyMjI1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "future console"
+    },
+    {
+      "id": "23",
+      "description": "A smartphone with a holographic display",
+      "imageUrl": "https://images.unsplash.com/photo-1760655873141-838b38c654dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmdXR1cmlzdGljJTIwc21hcnRwaG9uZXxlbnwwfHx8fDE3NzE4MjIyNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic smartphone"
+    },
+    {
+      "id": "24",
+      "description": "A projector that creates holographic images in your room",
+      "imageUrl": "https://images.unsplash.com/photo-1562873120-ba8c5c6658d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxob2xvZ3JhbSUyMHByb2plY3RvcnxlbnwwfHx8fDE3NzE4MjIyNTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hologram projector"
+    },
+    {
+      "id": "25",
+      "description": "A smart speaker that controls your entire home with a whisper",
+      "imageUrl": "https://images.unsplash.com/photo-1529359744902-86b2ab9edaea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzbWFydCUyMHNwZWFrZXJ8ZW58MHx8fHwxNzcxNzg1OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smart speaker"
+    },
+    {
+      "id": "26",
+      "description": "A VR headset that transports you to other worlds",
+      "imageUrl": "https://images.unsplash.com/photo-1702471897393-47ec1ba1192b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2ciUyMGhlYWRzZXR8ZW58MHx8fHwxNzcxNzk1ODgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vr headset"
+    },
+    {
+      "id": "27",
+      "description": "A sleek and powerful laptop for work and play",
+      "imageUrl": "https://images.unsplash.com/photo-1640955014216-75201056c829?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBsYXB0b3B8ZW58MHx8fHwxNzcxNzQyMTUzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gaming laptop"
+    },
+    {
+      "id": "28",
+      "description": "A smartwatch that can predict your future... probably",
+      "imageUrl": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzbWFydCUyMHdhdGNofGVufDB8fHx8MTc3MTczOTgxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smart watch"
     }
   ]
 }
