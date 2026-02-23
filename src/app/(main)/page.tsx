@@ -5,70 +5,61 @@ import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { searchProducts } from "@/ai/flows/product-search-flow";
-import { Loader2, Search, Wand2, XCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, XCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchedProductIds, setSearchedProductIds] = useState<string[] | null>(
-    null
-  );
-  const { toast } = useToast();
+  const [activeSearch, setActiveSearch] = useState("");
 
   const categories = [
     "All",
     ...Array.from(new Set(products.map((p) => p.category))),
   ];
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return;
-
-    setIsSearching(true);
-    setSearchedProductIds(null);
+    setActiveSearch(searchQuery);
     setSelectedCategory("All"); // Reset category filter on new search
-
-    try {
-      const result = await searchProducts({ query: searchQuery });
-      setSearchedProductIds(result.productIds);
-    } catch (error) {
-      console.error("AI Search failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Search Failed",
-        description: "Could not perform AI search. Please try again.",
-      });
-      setSearchedProductIds([]); // Set to empty array on error
-    } finally {
-      setIsSearching(false);
-    }
   };
 
   const filteredProducts = useMemo(() => {
-    if (searchedProductIds) {
-      const idSet = new Set(searchedProductIds);
-      // Preserve order from the AI result
-      return searchedProductIds.map(id => products.find(p => p.id === id)).filter(Boolean) as typeof products;
+    let results = products;
+
+    // Filter by search query if a search is active
+    if (activeSearch.trim() !== "") {
+      const lowercasedQuery = activeSearch.toLowerCase();
+      results = results.filter(
+        (p) =>
+          p.name.toLowerCase().includes(lowercasedQuery) ||
+          p.description.toLowerCase().includes(lowercasedQuery)
+      );
+      return results;
     }
+    
+    // Otherwise, filter by category
     if (selectedCategory !== "All") {
       return products.filter((p) => p.category === selectedCategory);
     }
+
     return products;
-  }, [selectedCategory, searchedProductIds]);
+  }, [selectedCategory, activeSearch]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    setSearchedProductIds(null); // Reset search when a category is clicked
     setSearchQuery("");
+    setActiveSearch("");
   };
 
   const clearSearch = () => {
     setSearchQuery("");
-    setSearchedProductIds(null);
+    setActiveSearch("");
+  }
+  
+  const clearAll = () => {
+    clearSearch();
+    setSelectedCategory("All");
   }
 
   return (
@@ -88,19 +79,15 @@ export default function ProductsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search with AI (e.g., 'a toy that defies gravity')"
+              placeholder="Search for products..."
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button type="submit" disabled={isSearching}>
-            {isSearching ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Wand2 />
-            )}
-            <span className="hidden md:inline ml-2">AI Search</span>
+          <Button type="submit">
+            <Search />
+            <span className="hidden md:inline ml-2">Search</span>
           </Button>
         </form>
 
@@ -111,7 +98,7 @@ export default function ProductsPage() {
           {categories.map((category) => (
             <Button
               key={category}
-              variant={selectedCategory === category && !searchedProductIds ? "default" : "outline"}
+              variant={selectedCategory === category && !activeSearch ? "default" : "outline"}
               size="sm"
               onClick={() => handleCategoryClick(category)}
             >
@@ -121,10 +108,10 @@ export default function ProductsPage() {
         </div>
       </div>
       
-      {searchedProductIds && (
+      {activeSearch && (
         <div className="flex items-center justify-between bg-secondary/50 p-3 rounded-lg">
             <p className="text-sm text-muted-foreground">
-                Showing {filteredProducts.length} AI results for <span className="font-bold text-foreground">"{searchQuery}"</span>
+                Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
             </p>
             <Button variant="ghost" size="sm" onClick={clearSearch}>
                 <XCircle className="mr-2"/>
@@ -134,23 +121,7 @@ export default function ProductsPage() {
       )}
 
 
-      {isSearching ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-                <Card key={i}>
-                    <div className="animate-pulse">
-                        <div className="aspect-video w-full bg-muted"></div>
-                        <CardHeader><div className="h-6 w-3/4 bg-muted rounded-md"></div></CardHeader>
-                        <CardContent className="space-y-2">
-                             <div className="h-4 w-full bg-muted rounded-md"></div>
-                             <div className="h-4 w-5/6 bg-muted rounded-md"></div>
-                        </CardContent>
-                        <CardFooter><div className="h-10 w-28 bg-muted rounded-full"></div></CardFooter>
-                    </div>
-                </Card>
-            ))}
-        </div>
-      ) : filteredProducts.length > 0 ? (
+      {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -164,11 +135,11 @@ export default function ProductsPage() {
             </CardHeader>
             <CardContent>
                 <p className="text-muted-foreground">
-                    {searchedProductIds ? "The AI couldn't find any products matching your query." : "There are no products in this category."}
+                    {activeSearch ? `Your search didn't match any products.` : "There are no products in this category."}
                 </p>
             </CardContent>
              <CardFooter className="justify-center">
-                 <Button onClick={clearSearch}>
+                 <Button onClick={clearAll}>
                     Clear Search & Filters
                  </Button>
              </CardFooter>
