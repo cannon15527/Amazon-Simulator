@@ -63,14 +63,22 @@ export default function CartPage() {
     }
     
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
+    let processingTimeout: NodeJS.Timeout;
+
     if (paypalSuccess && cart.length > 0 && selectedAddressId) {
       setIsProcessing(true);
       // Clean the URL to prevent re-processing on refresh
       router.replace('/cart');
-      setTimeout(() => {
+      processingTimeout = setTimeout(() => {
         processOrder();
         setIsProcessing(false);
       }, 6000);
+    }
+
+    return () => {
+        if (processingTimeout) {
+            clearTimeout(processingTimeout);
+        }
     }
   }, [addresses, searchParams, cart.length, getDefaultAddress, selectedAddressId, processOrder, router]);
 
