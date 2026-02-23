@@ -19,6 +19,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
 import { ProcessingOverlay } from "@/components/processing-overlay";
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
+};
+
 export default function CartPage() {
   const { cart, removeFromCart, cartTotal, clearCart } = useCart();
   const { balance, deduct } = useWallet();
@@ -28,20 +32,13 @@ export default function CartPage() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>();
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<'processing' | 'success' | 'declined'>('processing');
   const searchParams = useSearchParams();
   const router = useRouter();
   const processingRef = useRef(false);
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
-  };
   
   const processOrder = useCallback(() => {
     if (cart.length === 0) {
-      return;
-    }
-    if (balance < cartTotal) {
-      toast({ variant: "destructive", title: "Insufficient funds in your Amazon wallet." });
       return;
     }
     const shippingAddress = addresses.find(a => a.id === selectedAddressId);
@@ -55,7 +52,7 @@ export default function CartPage() {
       clearCart();
       toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
     }
-  }, [cart, balance, cartTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
+  }, [cart, cartTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
 
   useEffect(() => {
     const defaultAddress = getDefaultAddress();
@@ -70,15 +67,32 @@ export default function CartPage() {
     if (paypalSuccess && cart.length > 0 && selectedAddressId && !processingRef.current) {
       processingRef.current = true;
       setIsProcessing(true);
+      setProcessingStatus('processing');
       router.replace('/cart');
       
-      const processingTimeout = setTimeout(() => {
-        processOrder();
-        setIsProcessing(false);
-        processingRef.current = false;
-      }, 6000);
+      setTimeout(() => {
+        if (balance < cartTotal) {
+            setProcessingStatus('declined');
+            toast({
+                variant: "destructive",
+                title: "Transaction Declined",
+                description: `You have insufficient funds. You need ${formatCurrency(cartTotal)}.`,
+            });
+            setTimeout(() => {
+                setIsProcessing(false);
+                processingRef.current = false;
+            }, 2000);
+        } else {
+            processOrder();
+            setProcessingStatus('success');
+            setTimeout(() => {
+                setIsProcessing(false);
+                processingRef.current = false;
+            }, 2000);
+        }
+      }, 3000);
     }
-  }, [searchParams, cart.length, selectedAddressId, processOrder, router]);
+  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, cartTotal, toast]);
 
 
   const handleCheckoutClick = () => {
@@ -86,16 +100,33 @@ export default function CartPage() {
         toast({ variant: "destructive", title: "No shipping address", description: "Please add or select a shipping address to continue." });
         return;
       }
-      if(cartTotal > balance) {
-        toast({ variant: "destructive", title: "Insufficient Funds", description: `You need ${formatCurrency(cartTotal)} in your wallet, but you only have ${formatCurrency(balance)}.` });
-        return;
-      }
       setIsPaymentDialogOpen(true);
   }
 
+  const handleCardPayment = () => {
+    setIsProcessing(true);
+    setProcessingStatus('processing');
+
+    setTimeout(() => {
+      if (balance < cartTotal) {
+        setProcessingStatus('declined');
+        toast({
+          variant: "destructive",
+          title: "Transaction Declined",
+          description: `You have insufficient funds. You need ${formatCurrency(cartTotal)}.`,
+        });
+        setTimeout(() => setIsProcessing(false), 2000);
+      } else {
+        processOrder();
+        setProcessingStatus('success');
+        setTimeout(() => setIsProcessing(false), 2000);
+      }
+    }, 3000);
+  };
+
   return (
     <>
-    <ProcessingOverlay show={isProcessing} />
+    <ProcessingOverlay show={isProcessing} status={processingStatus} />
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tight">Shopping Cart</h1>
@@ -200,7 +231,7 @@ export default function CartPage() {
     <PaymentDialog
         isOpen={isPaymentDialogOpen}
         onOpenChange={setIsPaymentDialogOpen}
-        onPaymentSuccess={processOrder}
+        onPaymentSuccess={handleCardPayment}
         total={cartTotal}
     />
     </>

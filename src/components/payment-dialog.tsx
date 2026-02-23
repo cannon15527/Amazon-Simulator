@@ -21,8 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreditCard, Wallet, Loader2, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { CreditCard, Wallet, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
@@ -41,7 +40,6 @@ interface PaymentDialogProps {
 }
 
 export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }: PaymentDialogProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const cardForm = useForm<z.infer<typeof cardFormSchema>>({
@@ -58,19 +56,9 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
   
-  const handlePayment = () => {
-      setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-          console.log("Card payment submitted");
-          onPaymentSuccess();
-          setIsLoading(false);
-          onOpenChange(false); // Close dialog on success
-      }, 1500);
-  }
-
   function onCardSubmit(values: z.infer<typeof cardFormSchema>) {
-    handlePayment();
+    onPaymentSuccess();
+    onOpenChange(false);
   }
 
   function handlePayPalRedirect() {
@@ -105,7 +93,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
                     <FormItem>
                       <FormLabel>Name on Card</FormLabel>
                       <FormControl>
-                        <Input placeholder="John M. Doe" {...field} disabled={isLoading} />
+                        <Input placeholder="John M. Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -118,7 +106,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
                     <FormItem>
                       <FormLabel>Card Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="1111222233334444" {...field} disabled={isLoading}/>
+                        <Input placeholder="1111222233334444" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -132,7 +120,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
                         <FormItem className="flex-1">
                         <FormLabel>Expiry (MM/YY)</FormLabel>
                         <FormControl>
-                            <Input placeholder="12/28" {...field} disabled={isLoading}/>
+                            <Input placeholder="12/28" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -145,15 +133,14 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
                         <FormItem>
                         <FormLabel>CVC</FormLabel>
                         <FormControl>
-                            <Input placeholder="123" {...field} disabled={isLoading}/>
+                            <Input placeholder="123" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
                     )}
                     />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button type="submit" className="w-full">
                   Pay {formatCurrency(total)}
                 </Button>
               </form>
