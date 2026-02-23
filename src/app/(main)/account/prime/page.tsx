@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Rocket, Star, XCircle, Hourglass } from "lucide-react";
 import { PRIME_COST } from "@/lib/constants";
+import { format } from "date-fns";
 
 export default function PrimePage() {
-  const { isPrime, subscribe, unsubscribe, willCancel } = usePrime();
+  const { isPrime, subscribe, unsubscribe, willCancel, renewalDate } = usePrime();
   const { toast } = useToast();
 
   const handleSubscribe = () => {
@@ -44,11 +45,13 @@ export default function PrimePage() {
               <Star className="h-8 w-8 text-primary fill-primary" />
               <CardTitle className="font-headline text-2xl">You are a Prime Member!</CardTitle>
             </div>
+             {renewalDate && !willCancel && (
+              <CardDescription>
+                Your membership will renew on {format(renewalDate, 'MMMM d, yyyy')}.
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
-            <CardDescription>
-              Enjoy the best of Amazon with your Prime membership.
-            </CardDescription>
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
@@ -62,10 +65,10 @@ export default function PrimePage() {
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span>The satisfaction of being a premium virtual customer.</span>
               </li>
-               {willCancel && (
+               {willCancel && renewalDate && (
                 <li className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
                     <Hourglass className="h-5 w-5" />
-                    <span>Your subscription will be cancelled at the end of the cycle.</span>
+                    <span>Your subscription will be cancelled on {format(renewalDate, 'MMMM d, yyyy')}.</span>
                 </li>
                )}
             </ul>
@@ -97,7 +100,7 @@ export default function PrimePage() {
           <CardContent>
             <div className="flex items-baseline justify-center p-8 mb-4 bg-secondary rounded-lg">
                 <span className="text-4xl font-bold font-headline">{formatCurrency(PRIME_COST)}</span>
-                <span className="text-muted-foreground">/minute</span>
+                <span className="text-muted-foreground">/month</span>
             </div>
             <Button className="w-full" size="lg" onClick={handleSubscribe}>
               <Rocket className="mr-2 h-5 w-5" />
