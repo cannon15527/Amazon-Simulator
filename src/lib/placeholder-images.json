@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A whimsical, gravity-defying yo-yo",
+      "imageUrl": "https://images.unsplash.com/photo-1743355994216-cb0fd05564bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb2xvcmZ1bCUyMHRveXxlbnwwfHx8fDE3NzE4MTM1Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful toy"
+    },
+    {
+      "id": "2",
+      "description": "An invisible leash for imaginary pets",
+      "imageUrl": "https://images.unsplash.com/photo-1617485019529-edde856115b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxlbXB0eSUyMHBhcmt8ZW58MHx8fHwxNzcxODEzNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "empty park"
+    },
+    {
+      "id": "3",
+      "description": "A can of dehydrated water powder",
+      "imageUrl": "https://images.unsplash.com/photo-1658848437792-3255618874b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d2hpdGUlMjBwb3dkZXJ8ZW58MHx8fHwxNzcxNzQ0NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white powder"
+    },
+    {
+      "id": "4",
+      "description": "Seeds that grow into full plants instantly",
+      "imageUrl": "https://images.unsplash.com/photo-1671269941599-a538c692a7ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXN0JTIwZ3Jvd2luZ3xlbnwwfHx8fDE3NzE4MTM1Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fast growing"
+    },
+    {
+      "id": "5",
+      "description": "A small, safe, portable black hole for trash disposal",
+      "imageUrl": "https://images.unsplash.com/photo-1640984756059-7303641db7cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxibGFjayUyMGhvbGV8ZW58MHx8fHwxNzcxODEzNTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "black hole"
+    },
+    {
+      "id": "6",
+      "description": "A Rubik's Cube that solves itself",
+      "imageUrl": "https://images.unsplash.com/photo-1608751616074-087e128f24ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwdXp6bGUlMjBjdWJlfGVufDB8fHx8MTc3MTgxMzU3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "puzzle cube"
+    },
+    {
+      "id": "7",
+      "description": "A pair of socks that are guaranteed to never lose their match",
+      "imageUrl": "https://images.unsplash.com/photo-1598818432717-29f81b9224fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGFpcmVkJTIwc29ja3N8ZW58MHx8fHwxNzcxODEzNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paired socks"
+    },
+    {
+      "id": "8",
+      "description": "A bottomless bag of assorted snacks",
+      "imageUrl": "https://images.unsplash.com/photo-1723110568244-ab6886ad6a77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzbmFjayUyMHZhcmlldHl8ZW58MHx8fHwxNzcxODEzNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "snack variety"
+    }
+  ]
 }
