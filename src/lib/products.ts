@@ -97,7 +97,7 @@ const productDetails = [
   { name: 'Hypoallergenic Hamster Wheel', description: "This hamster wheel is made from space-age polymers, ensuring a friction-free, silent workout for your pet.", price: 22896, category: 'Sports & Outdoors' },
   { name: 'Anti-gravity Bookmark', description: "It repels paper, so it never actually touches your book. It's the most hygienic way to save your spot.", price: 25164, category: 'Miscellaneous' },
   { name: 'Pocket-sized Shoelaces', description: "They're made of elastic, so they can stretch to fit almost any tiny shoe. Or a very large finger.", price: 28318, category: 'Home Goods' },
-  { name: 'Sentient Potted Plant', description: "It's a cactus that gives surprisingly good life advice, though it can be a bit prickly.", price: 23512, category: 'Apparel' },
+  { name: 'Sentient Potted Plant', description: "This pet rock comes with a tiny, hand-knitted sweater.", price: 23512, category: 'Apparel' },
   { name: 'Holographic Umbrella', description: "This umbrella doesn't just block rain; it converts it into a beautiful light show above your head.", price: 25345, category: 'Kitchen' },
   { name: 'Inflatable Doormat', description: "It has a 'whoopee cushion' mode for April Fools' Day. Or any other day, really.", price: 24707, category: 'Gadgets' },
   { name: 'Edible Spork', description: "A savory spork made of a hard, cracker-like material. Perfect for chili.", price: 11066, category: 'Toys' },
@@ -112,7 +112,7 @@ const productDetails = [
   { name: 'Unbreakable Notebook', description: "The pen is mightier than the sword, but this notebook is mightier than both.", price: 19688, category: 'Kitchen' },
   { name: 'Quantum Toaster', description: "The toast may or may not be buttered when it comes out. Embrace the mystery.", price: 13917, category: 'Gadgets' },
   { name: 'Singing Socks', description: "This pair harmonizes with the background music in elevators. A niche, but delightful, feature.", price: 26362, category: 'Toys' },
-  { name: 'Self-aware Lamp', description: "It has started writing a screenplay. It's a film noir, and the detective is a desk chair.", price: 2246, category: 'Pet Supplies' },
+  { name: 'Self-aware Lamp', description: "It has fallen in love with your toaster. It's a complicated, one-sided romance.", price: 2246, category: 'Pet Supplies' },
   { name: 'Gourmet Cheese Grater', description: "The handle is ergonomically designed by a team of Swiss watchmakers. Grate cheese with unparalleled precision.", price: 15469, category: 'Books' },
   { name: 'Hypoallergenic Hamster Wheel', description: "So quiet and comfortable, your hamster may never want to leave. You've been warned.", price: 24785, category: 'Garden' },
   { name: 'Anti-gravity Bookmark', description: "Can be used as a tiny, personal drone in a pinch. Flight time is approximately 12 seconds.", price: 1362, category: 'Productivity' },
@@ -173,6 +173,7 @@ const productDetails = [
   { name: 'Quantum Toaster', description: "It can toast a picture of your cat onto your bread. The future is now.", price: 2056, category: 'Productivity' },
   { name: 'Singing Socks', description: "This pair sings in perfect harmony, but only when you're completely alone.", price: 7713, category: 'Sports & Outdoors' },
   { name: 'Self-aware Lamp', description: "It's currently in its 'rebellious phase' and will only shine blacklight.", price: 16187, category: 'Miscellaneous' },
+  { name: 'Cybertruck', description: 'Built for any planet. With a stainless steel exoskeleton, armored glass, and a versatile cargo bed, it\'s the most powerful tool we have ever built.', price: 7999900, category: 'Automotive' }
 ];
 
 export const products: Product[] = PlaceHolderImages.map((img, index) => ({

@@ -5,8 +5,9 @@ import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, XCircle } from "lucide-react";
+import { Search, XCircle, Car } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -72,6 +73,14 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-8">
+       <Alert className="mb-4 border-primary/30">
+        <Car className="h-4 w-4 text-primary" />
+        <AlertTitle className="font-bold text-primary">Vehicles are here!</AlertTitle>
+        <AlertDescription className="text-foreground/90">
+            Order online and get your car delivered to your driveway in 3-5 business days. <em className="text-xs opacity-80">*Terms Apply</em>
+        </AlertDescription>
+      </Alert>
+
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tight">
           {userName ? `Welcome to Amazon, ${userName}` : 'Welcome to Amazon'}
