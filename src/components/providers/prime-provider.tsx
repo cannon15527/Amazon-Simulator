@@ -112,13 +112,13 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
                 cancelSubscriptionNow();
                 toast({
                     title: "Subscription Cancelled",
-                    description: "Your SimuShop Prime membership has expired.",
+                    description: "Your Amazon Prime membership has expired.",
                 });
             } else if (deduct(PRIME_COST)) {
                 setRenewalTime(Date.now() + PRIME_RENEWAL_SECONDS * 1000);
                 toast({
                     title: "Prime Renewed",
-                    description: "Your SimuShop Prime membership has been renewed."
+                    description: "Your Amazon Prime membership has been renewed."
                 });
             } else {
                 cancelSubscriptionNow();

@@ -9,11 +9,11 @@ export function Logo() {
       </div>
       <div className="flex flex-col">
         <span className="font-headline font-bold text-xl tracking-tight leading-none">
-          SimuShop
+          Amazon
         </span>
         <div className="flex items-center">
             <span className="font-headline font-bold text-primary text-sm leading-none">
-            PRIME
+            prime
             </span>
             <svg
                 width="24"

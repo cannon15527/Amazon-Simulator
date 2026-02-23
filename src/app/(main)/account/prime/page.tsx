@@ -36,7 +36,7 @@ export default function PrimePage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-headline text-2xl font-semibold">SimuShop Prime</h2>
+      <h2 className="font-headline text-2xl font-semibold">Amazon Prime</h2>
       {isPrime ? (
         <Card className="bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-950/50 dark:to-orange-950/50">
           <CardHeader>
@@ -47,7 +47,7 @@ export default function PrimePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <CardDescription>
-              Enjoy the best of SimuShop with your Prime membership.
+              Enjoy the best of Amazon with your Prime membership.
             </CardDescription>
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export default function PrimePage() {
             </div>
             <Button className="w-full" size="lg" onClick={handleSubscribe}>
               <Rocket className="mr-2 h-5 w-5" />
-              Join SimuShop Prime
+              Join Amazon Prime
             </Button>
           </CardContent>
         </Card>

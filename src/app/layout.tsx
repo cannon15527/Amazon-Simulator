@@ -5,7 +5,7 @@ import { AppProviders } from '@/components/providers/app-providers';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'SimuShop Prime',
+  title: 'Amazon Prime Simulator',
   description: 'A playful Amazon Simulator app',
 };
 

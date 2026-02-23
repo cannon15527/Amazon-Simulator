@@ -66,7 +66,7 @@ export default function PayBudCheckoutPage() {
        <div className="absolute top-4 left-4">
             <Button variant="ghost" onClick={handleCancel}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to SimuShop
+                Back to Amazon
             </Button>
         </div>
       <Card className="w-full max-w-md shadow-2xl">
@@ -75,7 +75,7 @@ export default function PayBudCheckoutPage() {
                 <Wallet className="h-6 w-6" />
             </div>
           <CardTitle className="text-3xl font-bold text-blue-800 dark:text-blue-300">PayBud</CardTitle>
-          <CardDescription>You are paying SimuShop Prime</CardDescription>
+          <CardDescription>You are paying Amazon</CardDescription>
         </CardHeader>
         
         {step === 'login' && (

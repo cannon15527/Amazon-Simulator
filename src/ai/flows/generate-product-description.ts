@@ -37,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'generateProductDescriptionPrompt',
   input: {schema: GenerateProductDescriptionInputSchema},
   output: {schema: GenerateProductDescriptionOutputSchema},
-  prompt: `You are an expert copywriter specializing in creating whimsical and humorous product descriptions for an imaginary online shop called SimuShop Prime.
+  prompt: `You are an expert copywriter specializing in creating whimsical and humorous product descriptions for an imaginary online shop called Amazon.
 
 Generate a short, engaging, and funny product description for a virtual product based on its name and category.
 The description should be light-hearted and aim to make the user smile or laugh.
