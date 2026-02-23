@@ -83,8 +83,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   ) => {
     if (!currentDate) return;
 
-    const totalWithInterest = total * (1 + interest);
-    const monthlyPayment = totalWithInterest / duration;
+    const totalWithInterest = Math.round(total * (1 + interest));
+    const monthlyPayment = Math.ceil(totalWithInterest / duration);
 
     const newPlan: FinancePlan = {
       id: crypto.randomUUID(),
@@ -114,22 +114,32 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           return plan;
         }
 
-        // Payment is due
-        if (deduct(plan.monthlyPayment)) {
+        const remainingBalance = plan.totalAmount - plan.amountPaid;
+        const paymentAmount = Math.min(plan.monthlyPayment, remainingBalance);
+        
+        if (paymentAmount <= 0) {
+            if (plan.status === 'Active') {
+                hasChanged = true;
+                return { ...plan, status: 'Paid Off', amountPaid: plan.totalAmount };
+            }
+            return plan;
+        }
+
+        if (deduct(paymentAmount)) {
           hasChanged = true;
-          const newAmountPaid = plan.amountPaid + plan.monthlyPayment;
+          const newAmountPaid = plan.amountPaid + paymentAmount;
           const newPaymentsMade = plan.paymentsMade + 1;
 
-          const isPaidOff = newPaymentsMade >= plan.duration;
+          const isPaidOff = newAmountPaid >= plan.totalAmount;
           
           toast({
             title: "Affirm Payment Made",
-            description: `Your payment of ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(plan.monthlyPayment / 100)} was successful.`,
+            description: `Your payment of ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(paymentAmount / 100)} was successful.`,
           });
 
           return {
             ...plan,
-            amountPaid: newAmountPaid,
+            amountPaid: isPaidOff ? plan.totalAmount : newAmountPaid,
             paymentsMade: newPaymentsMade,
             nextPaymentDate: addMonths(
               new Date(plan.nextPaymentDate),
