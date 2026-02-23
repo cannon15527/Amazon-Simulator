@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,14 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const name = localStorage.getItem("simushop_user_name");
+    if (name) {
+      setUserName(name);
+    }
+  }, []);
 
   const categories = [
     "All",
@@ -66,7 +74,7 @@ export default function ProductsPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tight">
-          Welcome to Amazon
+          {userName ? `Welcome to Amazon, ${userName}` : 'Welcome to Amazon'}
         </h1>
         <p className="text-muted-foreground">
           Your one-stop shop for things that don't exist.
