@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 // A selection of products to feature in the Prime Deals section
-const dealProductIds = ["1", "5", "7", "12", "15", "25", "28"];
+const dealProductIds = ["1", "5", "7", "12", "15", "25", "28", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140", "145", "150", "155", "160", "165", "170", "175", "180", "185", "190", "195", "200", "205", "210", "215", "220", "225"];
 
 export default function PrimeDealsPage() {
   const { isPrime } = usePrime();
