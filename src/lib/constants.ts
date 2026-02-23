@@ -1,5 +1,6 @@
 export const INITIAL_WALLET_BALANCE = 10000;
 export const PRIME_COST = 999;
+export const PRIME_RENEWAL_SECONDS = 60;
 
 // Shipping times in seconds for simulation
 export const SHIPPING_TIME_PROCESSING_SECONDS = 5;
