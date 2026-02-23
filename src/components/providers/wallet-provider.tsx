@@ -7,6 +7,7 @@ interface WalletContextType {
   balance: number;
   setBalance: (balance: number) => void;
   deduct: (amount: number) => boolean;
+  addFunds: (amount: number) => void;
 }
 
 export const WalletContext = createContext<WalletContextType | undefined>(
@@ -45,12 +46,16 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     return false;
   };
 
+  const addFunds = (amount: number) => {
+    setBalance((prev) => prev + amount);
+  };
+
   if (!isHydrated) {
     return null;
   }
 
   return (
-    <WalletContext.Provider value={{ balance, setBalance, deduct }}>
+    <WalletContext.Provider value={{ balance, setBalance, deduct, addFunds }}>
       {children}
     </WalletContext.Provider>
   );

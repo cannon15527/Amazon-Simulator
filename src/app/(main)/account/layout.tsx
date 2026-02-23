@@ -3,12 +3,13 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Star, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const accountNav = [
   { href: "/account/addresses", label: "Addresses", icon: MapPin },
   { href: "/account/prime", label: "Prime", icon: Star },
+  { href: "/account/wallet", label: "Wallet", icon: Wallet },
 ];
 
 export default function AccountLayout({
@@ -39,7 +40,7 @@ export default function AccountLayout({
                 variant="ghost"
                 className={cn(
                   "justify-start",
-                  pathname === item.href && "bg-accent text-accent-foreground"
+                  pathname.startsWith(item.href) && "bg-accent text-accent-foreground"
                 )}
               >
                 <Link href={item.href}>

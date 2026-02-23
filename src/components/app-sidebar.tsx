@@ -16,7 +16,7 @@ const menuItems = [
   { href: "/", label: "Products", icon: Home },
   { href: "/cart", label: "Cart", icon: ShoppingCart },
   { href: "/orders", label: "Orders", icon: Package },
-  { href: "/account/addresses", label: "Account", icon: User },
+  { href: "/account", label: "Account", icon: User },
   { href: "/ai-description-generator", label: "AI Tool", icon: Wand2 },
 ];
 
