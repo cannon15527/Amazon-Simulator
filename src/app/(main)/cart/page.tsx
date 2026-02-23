@@ -18,6 +18,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
 import { ProcessingOverlay } from "@/components/processing-overlay";
+import { SALES_TAX_RATE } from "@/lib/constants";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -36,6 +37,9 @@ export default function CartPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const processingRef = useRef(false);
+
+  const taxAmount = cartTotal * SALES_TAX_RATE;
+  const orderTotal = cartTotal + taxAmount;
   
   const processOrder = useCallback(() => {
     if (cart.length === 0) {
@@ -47,12 +51,12 @@ export default function CartPage() {
       return;
     }
 
-    if (deduct(cartTotal)) {
-      addOrder(cart, cartTotal, shippingAddress);
+    if (deduct(orderTotal)) {
+      addOrder(cart, orderTotal, shippingAddress);
       clearCart();
       toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
     }
-  }, [cart, cartTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
+  }, [cart, orderTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
 
   useEffect(() => {
     const defaultAddress = getDefaultAddress();
@@ -71,12 +75,12 @@ export default function CartPage() {
       router.replace('/cart');
       
       setTimeout(() => {
-        if (balance < cartTotal) {
+        if (balance < orderTotal) {
             setProcessingStatus('declined');
             toast({
                 variant: "destructive",
                 title: "Transaction Declined",
-                description: `You have insufficient funds. You need ${formatCurrency(cartTotal)}.`,
+                description: `You have insufficient funds. You need ${formatCurrency(orderTotal)}.`,
             });
             setTimeout(() => {
                 setIsProcessing(false);
@@ -92,7 +96,7 @@ export default function CartPage() {
         }
       }, 3000);
     }
-  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, cartTotal, toast]);
+  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, orderTotal, toast]);
 
 
   const handleCheckoutClick = () => {
@@ -108,12 +112,12 @@ export default function CartPage() {
     setProcessingStatus('processing');
 
     setTimeout(() => {
-      if (balance < cartTotal) {
+      if (balance < orderTotal) {
         setProcessingStatus('declined');
         toast({
           variant: "destructive",
           title: "Transaction Declined",
-          description: `You have insufficient funds. You need ${formatCurrency(cartTotal)}.`,
+          description: `You have insufficient funds. You need ${formatCurrency(orderTotal)}.`,
         });
         setTimeout(() => setIsProcessing(false), 2000);
       } else {
@@ -184,13 +188,17 @@ export default function CartPage() {
                   <span>{formatCurrency(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between">
+                  <span>Sales Tax ({(SALES_TAX_RATE * 100).toFixed(1)}%)</span>
+                  <span>{formatCurrency(taxAmount)}</span>
+                </div>
+                <div className="flex justify-between">
                   <span>Shipping</span>
                   <span>Free</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>{formatCurrency(cartTotal)}</span>
+                  <span>{formatCurrency(orderTotal)}</span>
                 </div>
                  <Separator />
                  <div>
@@ -232,7 +240,7 @@ export default function CartPage() {
         isOpen={isPaymentDialogOpen}
         onOpenChange={setIsPaymentDialogOpen}
         onPaymentSuccess={handleCardPayment}
-        total={cartTotal}
+        total={orderTotal}
     />
     </>
   );

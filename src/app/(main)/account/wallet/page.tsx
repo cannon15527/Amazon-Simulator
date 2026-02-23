@@ -27,7 +27,7 @@ export default function WalletPage() {
         description: `${formatCurrency(amount)} has been added to your wallet.`,
       });
       setIsProcessing(false);
-    }, 6000);
+    }, 2000);
   };
   
   const fundAmounts = [1000, 2000, 5000, 10000];

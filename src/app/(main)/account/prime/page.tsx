@@ -39,7 +39,7 @@ export default function PrimePage() {
     <div className="space-y-6">
       <h2 className="font-headline text-2xl font-semibold">Amazon Prime</h2>
       {isPrime ? (
-        <Card className="bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-950/50 dark:to-orange-950/50 hover:shadow-2xl hover:shadow-primary/20">
+        <Card className="bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-950/50 hover:shadow-2xl hover:shadow-primary/20">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Star className="h-8 w-8 text-primary fill-primary" />
