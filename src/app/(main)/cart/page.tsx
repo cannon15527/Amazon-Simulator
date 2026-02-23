@@ -13,7 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
 
@@ -23,16 +24,17 @@ export default function CartPage() {
   const { addOrder } = useOrders();
   const { addresses, getDefaultAddress } = useAddresses();
   const { toast } = useToast();
-  const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>(getDefaultAddress()?.id);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>();
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const searchParams = useSearchParams();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
   
-  const processOrder = () => {
+  const processOrder = useCallback(() => {
     if (cart.length === 0) {
-      toast({ variant: "destructive", title: "Cart is empty" });
+      // Don't toast if cart is empty, might happen on re-renders
       return;
     }
     if (balance < cartTotal) {
@@ -50,7 +52,22 @@ export default function CartPage() {
       clearCart();
       toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
     }
-  };
+  }, [cart, balance, cartTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
+
+  useEffect(() => {
+    const defaultAddress = getDefaultAddress();
+    if (!selectedAddressId && defaultAddress) {
+      setSelectedAddressId(defaultAddress.id);
+    }
+    
+    const paybudSuccess = searchParams.get('paybud_success') === 'true';
+    if (paybudSuccess && cart.length > 0 && selectedAddressId) {
+      processOrder();
+      // Clean the URL to prevent re-processing on refresh
+      window.history.replaceState(null, '', '/cart');
+    }
+  }, [addresses, searchParams, cart, getDefaultAddress, selectedAddressId, processOrder]);
+
 
   const handleCheckoutClick = () => {
       if (!selectedAddressId) {

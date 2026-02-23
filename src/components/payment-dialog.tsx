@@ -21,20 +21,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Wallet, Loader2, ExternalLink } from "lucide-react";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 const cardFormSchema = z.object({
   cardNumber: z.string().regex(/^(?:\d{16})$/, {message: "Must be 16 digits."}).transform(val => val.replace(/\s/g, '')),
   expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/, "MM/YY format required."),
   cvc: z.string().regex(/^\d{3,4}$/, "Must be 3 or 4 digits."),
   nameOnCard: z.string().min(2, "Name is required."),
-});
-
-const payBudFormSchema = z.object({
-    email: z.string().email("Invalid email address."),
-    password: z.string().min(8, "Password must be at least 8 characters."),
 });
 
 interface PaymentDialogProps {
@@ -46,6 +42,7 @@ interface PaymentDialogProps {
 
 export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }: PaymentDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const cardForm = useForm<z.infer<typeof cardFormSchema>>({
     resolver: zodResolver(cardFormSchema),
@@ -57,23 +54,15 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
     },
   });
 
-  const payBudForm = useForm<z.infer<typeof payBudFormSchema>>({
-    resolver: zodResolver(payBudFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
   };
   
-  const handlePayment = (paymentType: string) => {
+  const handlePayment = () => {
       setIsLoading(true);
       // Simulate API call
       setTimeout(() => {
-          console.log(`${paymentType} payment submitted`);
+          console.log("Card payment submitted");
           onPaymentSuccess();
           setIsLoading(false);
           onOpenChange(false); // Close dialog on success
@@ -81,11 +70,11 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
   }
 
   function onCardSubmit(values: z.infer<typeof cardFormSchema>) {
-    handlePayment("Card");
+    handlePayment();
   }
 
-  function onPayBudSubmit(values: z.infer<typeof payBudFormSchema>) {
-    handlePayment("PayBud");
+  function handlePayBudRedirect() {
+    router.push(`/paybud-checkout?total=${total}`);
   }
 
   return (
@@ -171,40 +160,13 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
             </Form>
           </TabsContent>
           <TabsContent value="paybud">
-             <Form {...payBudForm}>
-              <form onSubmit={payBudForm.handleSubmit(onPayBudSubmit)} className="space-y-4 pt-4">
-                 <FormField
-                  control={payBudForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>PayBud Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="you@example.com" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={payBudForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In & Pay {formatCurrency(total)}
-                </Button>
-              </form>
-            </Form>
+             <div className="space-y-4 pt-4 text-center">
+              <p className="text-sm text-muted-foreground">You'll be redirected to PayBud to complete your purchase securely.</p>
+              <Button type="button" className="w-full" size="lg" onClick={handlePayBudRedirect}>
+                <ExternalLink className="mr-2" />
+                Sign in on external website
+              </Button>
+             </div>
           </TabsContent>
         </Tabs>
       </DialogContent>
