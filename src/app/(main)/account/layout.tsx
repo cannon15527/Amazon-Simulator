@@ -45,10 +45,10 @@ function DeleteAccountDialog() {
     setIsOpen(false);
     toast({
         title: "Account Deleted",
-        description: "Your account data has been reset. The app will now reload."
+        description: "Your account data has been reset. You will be redirected to sign up."
     });
-    // Force a reload to re-initialize all state from scratch.
-    setTimeout(() => window.location.href = '/', 1000);
+    // Redirect to sign up page.
+    setTimeout(() => window.location.href = '/signup', 1000);
   };
   
   return (
