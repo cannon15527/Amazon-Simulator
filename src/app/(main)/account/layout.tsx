@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, Star, Wallet } from "lucide-react";
+import { MapPin, Star, Wallet, Landmark, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const accountNav = [
   { href: "/account/addresses", label: "Addresses", icon: MapPin },
   { href: "/account/prime", label: "Prime", icon: Star },
   { href: "/account/wallet", label: "Wallet", icon: Wallet },
+  { href: "/account/affirm", label: "Affirm", icon: Receipt },
 ];
 
 export default function AccountLayout({

@@ -90,7 +90,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
             </TabsTrigger>
             {showFinancing && (
                 <TabsTrigger value="finance">
-                    <Landmark className="mr-2 h-4 w-4" /> Finance
+                    <Landmark className="mr-2 h-4 w-4" /> Affirm
                 </TabsTrigger>
             )}
           </TabsList>
@@ -169,10 +169,10 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
            {showFinancing && (
             <TabsContent value="finance">
                 <div className="space-y-4 pt-4 text-center">
-                    <p className="text-sm text-muted-foreground">You'll be redirected to Affirmative Finance to set up a payment plan.</p>
+                    <p className="text-sm text-muted-foreground">You'll be redirected to Affirm to set up a payment plan.</p>
                     <Button type="button" className="w-full" size="lg" onClick={handleFinanceRedirect}>
                         <ExternalLink className="mr-2" />
-                        Continue with Affirmative Finance
+                        Continue with Affirm
                     </Button>
                 </div>
             </TabsContent>

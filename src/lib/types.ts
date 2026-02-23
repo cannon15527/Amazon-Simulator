@@ -33,3 +33,16 @@ export interface Order {
   orderDate: number; // timestamp
   estimatedDelivery: number; // timestamp
 }
+
+export interface FinancePlan {
+  id: string;
+  orderId: string;
+  totalAmount: number;
+  amountPaid: number;
+  monthlyPayment: number;
+  paymentsMade: number;
+  duration: number; // in months
+  interestRate: number; // as a decimal, e.g., 0.0499
+  nextPaymentDate: number; // timestamp
+  status: 'Active' | 'Paid Off';
+}

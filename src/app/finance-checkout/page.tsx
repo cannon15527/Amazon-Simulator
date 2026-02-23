@@ -53,7 +53,6 @@ export default function FinanceCheckoutPage() {
   const getMonthlyPayment = (planId: string) => {
       const plan = financePlans.find(p => p.id === planId);
       if (!plan) return 0;
-      // Note: This is a simplified calculation, not real interest.
       const interestRate = parseFloat(plan.interest) / 100;
       const monthlyTotal = (total * (1 + interestRate)) / plan.duration;
       return monthlyTotal;
@@ -62,7 +61,6 @@ export default function FinanceCheckoutPage() {
   function onLoginSubmit(values: z.infer<typeof loginFormSchema>) {
     setIsLoading(true);
     setTimeout(() => {
-      // In a real app, you'd verify credentials. Here, we just proceed.
       setStep('plan-selection');
       setIsLoading(false);
     }, 2000);
@@ -71,9 +69,13 @@ export default function FinanceCheckoutPage() {
   const handlePlanSelection = (planId: string) => {
     setIsLoading(true);
     setSelectedPlanId(planId);
+    const plan = financePlans.find(p => p.id === planId);
+    if (!plan) return;
+
+    const interestRate = parseFloat(plan.interest) / 100;
+
     setTimeout(() => {
-        // Redirect back to cart with a success flag
-        router.push('/cart?finance_success=true');
+        router.push(`/cart?finance_success=true&total=${total}&duration=${plan.duration}&interest=${interestRate}`);
     }, 2000);
   };
 
@@ -82,7 +84,7 @@ export default function FinanceCheckoutPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-green-50 dark:bg-green-950/20 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-purple-50 dark:bg-purple-950/20 p-4">
        <div className="absolute top-4 left-4">
             <Button variant="ghost" onClick={handleCancel}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -91,10 +93,10 @@ export default function FinanceCheckoutPage() {
         </div>
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-600 text-white mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-600 text-white mb-4">
                 <Landmark className="h-6 w-6" />
             </div>
-          <CardTitle className="text-3xl font-bold text-green-800 dark:text-green-300">Affirmative Finance</CardTitle>
+          <CardTitle className="text-3xl font-bold text-purple-800 dark:text-purple-300">Affirm</CardTitle>
           <CardDescription>You are financing your purchase from Amazon</CardDescription>
         </CardHeader>
         
@@ -114,7 +116,7 @@ export default function FinanceCheckoutPage() {
                                 <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input type="email" placeholder="you@affirmative.com" {...field} disabled={isLoading} />
+                                    <Input type="email" placeholder="you@affirm.com" {...field} disabled={isLoading} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
@@ -133,7 +135,7 @@ export default function FinanceCheckoutPage() {
                                 </FormItem>
                             )}
                         />
-                         <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg" disabled={isLoading}>
+                         <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg" disabled={isLoading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Sign In & View Plans
                         </Button>

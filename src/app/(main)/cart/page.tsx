@@ -19,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
 import { ProcessingOverlay } from "@/components/processing-overlay";
 import { SALES_TAX_RATE } from "@/lib/constants";
+import { useFinance } from "@/hooks/use-finance";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -30,6 +31,7 @@ export default function CartPage() {
   const { addOrder } = useOrders();
   const { addresses, getDefaultAddress } = useAddresses();
   const { toast } = useToast();
+  const { addFinancePlan } = useFinance();
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>();
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -42,21 +44,18 @@ export default function CartPage() {
   const orderTotal = cartTotal + taxAmount;
   
   const processOrder = useCallback(() => {
-    if (cart.length === 0) {
-      return;
-    }
+    if (cart.length === 0) return;
+
     const shippingAddress = addresses.find(a => a.id === selectedAddressId);
     if (!shippingAddress) {
       toast({ variant: "destructive", title: "No shipping address", description: "Please add or select a shipping address." });
       return;
     }
 
-    if (deduct(orderTotal)) {
-      addOrder(cart, orderTotal, shippingAddress);
-      clearCart();
-      toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
-    }
-  }, [cart, orderTotal, addresses, selectedAddressId, deduct, addOrder, clearCart, toast]);
+    addOrder(cart, orderTotal, shippingAddress);
+    clearCart();
+    toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
+  }, [cart, orderTotal, addresses, selectedAddressId, addOrder, clearCart, toast]);
 
   useEffect(() => {
     const defaultAddress = getDefaultAddress();
@@ -65,39 +64,60 @@ export default function CartPage() {
     }
   }, [addresses, getDefaultAddress, selectedAddressId]);
   
-  useEffect(() => {
+ useEffect(() => {
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
     const financeSuccess = searchParams.get('finance_success') === 'true';
+    const planDuration = searchParams.get('duration');
+    const planInterest = searchParams.get('interest');
+    const planTotal = searchParams.get('total');
 
     if ((paypalSuccess || financeSuccess) && cart.length > 0 && selectedAddressId && !processingRef.current) {
       processingRef.current = true;
       setIsProcessing(true);
       setProcessingStatus('processing');
-      router.replace('/cart');
+      router.replace('/cart', { scroll: false });
       
       setTimeout(() => {
-        if (balance < orderTotal) {
-            setProcessingStatus('declined');
-            toast({
-                variant: "destructive",
-                title: "Transaction Declined",
-                description: `You have insufficient funds. You need ${formatCurrency(orderTotal)}.`,
-            });
-            setTimeout(() => {
-                setIsProcessing(false);
-                processingRef.current = false;
-            }, 2000);
-        } else {
-            processOrder();
+        const shippingAddress = addresses.find(a => a.id === selectedAddressId);
+
+        if (financeSuccess) {
+            if (!shippingAddress || !planDuration || !planInterest || !planTotal) {
+                setProcessingStatus('declined');
+                 toast({ variant: "destructive", title: "Financing Failed", description: "Missing plan details." });
+                 setTimeout(() => {
+                    setIsProcessing(false);
+                    processingRef.current = false;
+                }, 2000);
+                return;
+            }
+            const newOrder = addOrder(cart, orderTotal, shippingAddress);
+            addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
+            clearCart();
             setProcessingStatus('success');
-            setTimeout(() => {
-                setIsProcessing(false);
-                processingRef.current = false;
-            }, 2000);
+            toast({ title: "Financing Approved!", description: "Your order has been placed." });
+        } else { // PayPal
+            if (balance < orderTotal) {
+                setProcessingStatus('declined');
+                toast({
+                    variant: "destructive",
+                    title: "Transaction Declined",
+                    description: `You have insufficient funds. You need ${formatCurrency(orderTotal)}.`,
+                });
+            } else {
+                deduct(orderTotal);
+                processOrder();
+                setProcessingStatus('success');
+            }
         }
+        
+        setTimeout(() => {
+            setIsProcessing(false);
+            processingRef.current = false;
+        }, 2000);
+
       }, 3000);
     }
-  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, orderTotal, toast]);
+  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, orderTotal, toast, addresses, addFinancePlan, addOrder, clearCart, deduct]);
 
 
   const handleCheckoutClick = () => {
@@ -122,6 +142,7 @@ export default function CartPage() {
         });
         setTimeout(() => setIsProcessing(false), 2000);
       } else {
+        deduct(orderTotal);
         processOrder();
         setProcessingStatus('success');
         setTimeout(() => setIsProcessing(false), 2000);

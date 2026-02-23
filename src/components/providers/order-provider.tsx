@@ -14,7 +14,7 @@ import { usePrime } from "@/hooks/use-prime";
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (items: CartItem[], total: number, address: Address) => void;
+  addOrder: (items: CartItem[], total: number, address: Address) => Order;
 }
 
 export const OrderContext = createContext<OrderContextType | undefined>(
@@ -74,6 +74,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       estimatedDelivery: now + (shippingTime * 1000),
     };
     setOrders((prev) => [newOrder, ...prev]);
+    return newOrder;
   };
 
   const updateOrderStatus = useCallback(() => {
