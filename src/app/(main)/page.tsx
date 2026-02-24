@@ -6,7 +6,7 @@ import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, XCircle, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import {
   Carousel,
@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 
 const PRODUCTS_PER_PAGE = 12;
@@ -125,28 +126,36 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
-        <section className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">
-               {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-                Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
-            </p>
-            <form onSubmit={handleSearch} className="flex max-w-lg mx-auto gap-2">
-              <div className="relative flex-grow">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search for anti-gravity boots..."
-                  className="pl-10 h-11"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+        <section className="w-full py-12 md:py-16 lg:py-20 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
+          <div className="container px-4 md:px-6 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="inline-block rounded-lg bg-accent px-3 py-1 text-sm font-semibold text-accent-foreground shadow-sm border">
+                Prime Day Every Day (In 2029)
               </div>
-              <Button type="submit" size="lg">
-                Search
-              </Button>
-            </form>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
+                {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
+              </h1>
+              <p className="max-w-[700px] text-muted-foreground md:text-xl">
+                Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
+              </p>
+              <div className="flex flex-col gap-3 min-[400px]:flex-row justify-center">
+                <Button asChild size="lg">
+                  <Link href="/prime-deals">
+                    <Star className="mr-2" /> Browse Prime Deals
+                  </Link>
+                </Button>
+                 <form onSubmit={handleSearch} className="flex w-full max-w-sm items-center space-x-2">
+                    <Input 
+                      type="text" 
+                      placeholder="Search for anti-gravity boots..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <Button type="submit">Search</Button>
+                </form>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section>
@@ -172,7 +181,7 @@ export default function ProductsPage() {
             </Carousel>
         </section>
 
-        <section>
+        <section id="browse-all">
              <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
                 <h2 className="text-2xl font-bold tracking-tight">Browse All Products</h2>
                 <div className="flex items-center gap-2 w-full md:w-auto">
