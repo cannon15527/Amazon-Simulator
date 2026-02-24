@@ -176,7 +176,7 @@ const productDetails = [
   { name: 'Cybertruck', description: 'Built for any planet. With a stainless steel exoskeleton, armored glass, and a versatile cargo bed, it\'s the most powerful tool we have ever built.', price: 7999900, category: 'Automotive' }
 ];
 
-export const products: Product[] = PlaceHolderImages.map((img, index) => ({
+const allProductsRaw: Product[] = PlaceHolderImages.map((img, index) => ({
   id: img.id,
   name: productDetails[index]?.name || `Virtual Product ${index + 1}`,
   description: productDetails[index]?.description || 'An amazing virtual product.',
@@ -185,3 +185,12 @@ export const products: Product[] = PlaceHolderImages.map((img, index) => ({
   imageUrl: img.imageUrl,
   imageHint: img.imageHint,
 }));
+
+const uniqueProducts = new Map<string, Product>();
+allProductsRaw.forEach(product => {
+  if (!uniqueProducts.has(product.name)) {
+    uniqueProducts.set(product.name, product);
+  }
+});
+
+export const products: Product[] = Array.from(uniqueProducts.values());

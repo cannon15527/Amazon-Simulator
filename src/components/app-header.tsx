@@ -7,6 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { Badge } from "./ui/badge";
 import { usePrime } from "@/hooks/use-prime";
+import { useDate } from "@/hooks/use-date";
+import { format } from "date-fns";
+
+function TopBar() {
+  const { currentDate } = useDate();
+  // Don't render on the server or until hydrated, since date is client-side
+  if (!currentDate) return null;
+
+  return (
+    <div className="bg-muted/50 text-muted-foreground text-xs text-center py-1.5">
+      <div className="container">
+        <span>Today's simulated date is: {format(currentDate, "MMMM d, yyyy")}</span>
+      </div>
+    </div>
+  );
+}
+
 
 export function AppHeader() {
   const { balance } = useWallet();
@@ -22,6 +39,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
+      <TopBar />
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <Logo isPrime={isPrime} />
