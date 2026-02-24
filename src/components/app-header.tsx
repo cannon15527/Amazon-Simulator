@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ShoppingCart, Wallet, User, Star, Receipt } from "lucide-react";
+import { ShoppingCart, Wallet, User, Star, Receipt, RefreshCw } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,18 @@ import { useDate } from "@/hooks/use-date";
 import { format } from "date-fns";
 
 function TopBar() {
-  const { currentDate } = useDate();
+  const { currentDate, resetDate } = useDate();
   // Don't render on the server or until hydrated, since date is client-side
   if (!currentDate) return null;
 
   return (
     <div className="bg-muted/50 text-muted-foreground text-xs text-center py-1.5">
-      <div className="container">
+      <div className="container flex items-center justify-center gap-2">
         <span>Today's simulated date is: {format(currentDate, "MMMM d, yyyy")}</span>
+        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={resetDate} aria-label="Reset date to today">
+            <RefreshCw className="h-3 w-3" />
+            <span className="sr-only">Reset date</span>
+        </Button>
       </div>
     </div>
   );

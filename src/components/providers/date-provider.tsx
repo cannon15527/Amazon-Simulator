@@ -4,6 +4,7 @@ import { createContext, useState, useEffect, type ReactNode } from "react";
 
 interface DateContextType {
   currentDate: Date;
+  resetDate: () => void;
 }
 
 export const DateContext = createContext<DateContextType | undefined>(
@@ -53,12 +54,16 @@ export function DateProvider({ children }: { children: ReactNode }) {
     }
   }, [currentDate, isHydrated]);
   
+  const resetDate = () => {
+    setCurrentDate(new Date());
+  };
+
   if (!isHydrated) {
     return null;
   }
 
   return (
-    <DateContext.Provider value={{ currentDate }}>
+    <DateContext.Provider value={{ currentDate, resetDate }}>
       {children}
     </DateContext.Provider>
   );

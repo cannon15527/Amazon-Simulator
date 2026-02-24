@@ -26,6 +26,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@/hooks/use-wallet";
+import { INITIAL_WALLET_BALANCE } from "@/lib/constants";
 
 const accountNav = [
   { href: "/account/addresses", label: "Addresses" },
@@ -39,11 +41,13 @@ function DeleteAccountDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState("");
   const { toast } = useToast();
+  const { setBalance } = useWallet();
 
   const isConfirmationMatching = confirmationText.toLowerCase() === "delete";
 
   const handleDelete = () => {
     localStorage.clear();
+    setBalance(INITIAL_WALLET_BALANCE);
     setIsOpen(false);
     toast({
         title: "Account Deleted",
