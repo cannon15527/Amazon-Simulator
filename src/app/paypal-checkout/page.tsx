@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wallet, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
+import { Wallet, ArrowLeft, CreditCard, Loader2, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,11 @@ const loginFormSchema = z.object({
   password: z.string().min(1, "Password cannot be empty."),
 });
 
+const verificationSchema = z.object({
+    code: z.string().length(6, "Please enter a 6-digit code."),
+});
+
+
 const fakeCards = [
     { id: '1', brand: 'Visa', last4: '1234' },
     { id: '2', brand: 'Mastercard', last4: '5678' },
@@ -26,7 +31,7 @@ export default function PayPalCheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [total, setTotal] = useState(0);
-  const [step, setStep] = useState<'login' | 'card-selection'>('login');
+  const [step, setStep] = useState<'login' | 'verification' | 'card-selection'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
@@ -47,6 +52,13 @@ export default function PayPalCheckoutPage() {
     },
   });
 
+  const verificationForm = useForm<z.infer<typeof verificationSchema>>({
+    resolver: zodResolver(verificationSchema),
+    defaultValues: {
+      code: "",
+    },
+  });
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 100);
   };
@@ -55,11 +67,20 @@ export default function PayPalCheckoutPage() {
     setIsLoading(true);
     setTimeout(() => {
       // In a real app, you'd verify credentials. Here, we just proceed.
-      setStep('card-selection');
+      setStep('verification');
       setIsLoading(false);
     }, 2000);
   }
   
+  function onVerificationSubmit(values: z.infer<typeof verificationSchema>) {
+    setIsLoading(true);
+    setTimeout(() => {
+        // In a real app, you'd verify the code. Here, we just proceed.
+        setStep('card-selection');
+        setIsLoading(false);
+    }, 1000);
+  }
+
   const handleCardSelection = (cardId: string) => {
     setIsLoading(true);
     setSelectedCardId(cardId);
@@ -95,7 +116,6 @@ export default function PayPalCheckoutPage() {
         </CardHeader>
         
         {step === 'login' && (
-            <>
             <CardContent className="space-y-6">
                 <div className="text-center">
                     <p className="text-sm text-muted-foreground">Total Amount</p>
@@ -131,13 +151,44 @@ export default function PayPalCheckoutPage() {
                         />
                          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg" disabled={isLoading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Sign In & Authorize Payment
+                            Sign In & Authorize
                         </Button>
                     </form>
                  </Form>
             </CardContent>
-            </>
         )}
+        
+        {step === 'verification' && (
+             <CardContent>
+                <div className="text-center mb-6">
+                    <ShieldCheck className="mx-auto h-10 w-10 text-blue-600 mb-2"/>
+                    <h3 className="text-xl font-semibold">Enter Verification Code</h3>
+                    <p className="text-sm text-muted-foreground mt-1">A code was sent to your email. For this demo, any 6 digits will work.</p>
+                </div>
+                <Form {...verificationForm}>
+                    <form onSubmit={verificationForm.handleSubmit(onVerificationSubmit)} className="space-y-4">
+                        <FormField
+                            control={verificationForm.control}
+                            name="code"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>6-Digit Code</FormLabel>
+                                <FormControl>
+                                    <Input type="text" inputMode="numeric" placeholder="123456" {...field} disabled={isLoading} maxLength={6} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Verify & Continue
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        )}
+
 
         {step === 'card-selection' && (
             <>
