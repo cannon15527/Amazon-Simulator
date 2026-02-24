@@ -56,7 +56,7 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
-            <Card key={order.id} className="hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-1">
+            <Card key={order.id} className="hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1">
               <CardHeader className="flex flex-row items-start justify-between gap-4">
                 <div>
                   <CardTitle>
