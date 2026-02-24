@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,8 @@ import { useCart } from "@/hooks/use-cart";
 import { ShoppingCart, BadgePercent } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "./ui/badge";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ProductDetail } from "./product-detail";
 
 interface ProductCardProps {
   product: Product;
@@ -24,6 +27,7 @@ interface ProductCardProps {
 export function ProductCard({ product, originalPrice }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -42,45 +46,54 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2">
-      <CardHeader className="p-0">
-        <div className="relative aspect-video">
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            className="object-cover"
-            data-ai-hint={product.imageHint}
-          />
-           {originalPrice && (
-            <Badge variant="destructive" className="absolute right-2 top-2 flex items-center gap-1">
-                <BadgePercent className="h-4 w-4" /> 50% OFF
-            </Badge>
-          )}
-        </div>
-        <div className="p-6 pb-2">
-          <CardTitle className="font-headline text-xl">{product.name}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <CardDescription>{product.description}</CardDescription>
-      </CardContent>
-      <CardFooter className="flex items-center justify-between bg-secondary/30 p-4">
-        <div className="flex flex-col items-start">
-            {originalPrice && (
-                <span className="text-sm text-muted-foreground line-through">
-                    {formatCurrency(originalPrice)}
-                </span>
-            )}
-            <div className="font-headline text-xl font-bold text-primary">
-            {formatCurrency(product.price)}
-            </div>
-        </div>
-        <Button onClick={handleAddToCart} size="sm">
-          <ShoppingCart className="mr-2" />
-          Add to Cart
-        </Button>
-      </CardFooter>
-    </Card>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Card className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2">
+        <DialogTrigger asChild>
+          <div className="cursor-pointer">
+            <CardHeader className="p-0">
+              <div className="relative aspect-video">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={product.imageHint}
+                />
+                {originalPrice && (
+                  <Badge variant="destructive" className="absolute right-2 top-2 flex items-center gap-1">
+                      <BadgePercent className="h-4 w-4" /> 50% OFF
+                  </Badge>
+                )}
+              </div>
+              <div className="p-6 pb-2">
+                <CardTitle className="font-headline text-xl h-14">{product.name}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              <CardDescription className="line-clamp-3">{product.description}</CardDescription>
+            </CardContent>
+          </div>
+        </DialogTrigger>
+        <CardFooter className="flex items-center justify-between bg-secondary/30 p-4 mt-auto">
+          <div className="flex flex-col items-start">
+              {originalPrice && (
+                  <span className="text-sm text-muted-foreground line-through">
+                      {formatCurrency(originalPrice)}
+                  </span>
+              )}
+              <div className="font-headline text-xl font-bold text-primary">
+              {formatCurrency(product.price)}
+              </div>
+          </div>
+          <Button onClick={handleAddToCart} size="sm">
+            <ShoppingCart className="mr-2" />
+            Add to Cart
+          </Button>
+        </CardFooter>
+      </Card>
+      <DialogContent className="p-0 max-w-md gap-0 overflow-hidden rounded-lg">
+        <ProductDetail product={product} originalPrice={originalPrice} onClose={() => setIsDialogOpen(false)} />
+      </DialogContent>
+    </Dialog>
   );
 }
