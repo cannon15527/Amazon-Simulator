@@ -1,9 +1,12 @@
+
 "use client";
 
 import { AppHeader } from "@/components/app-header";
 import { AppFooter } from "@/components/app-footer";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default function MainLayout({
   children,
@@ -35,12 +38,17 @@ export default function MainLayout({
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <AppHeader />
-      <main className="flex-1">
-        <div className="container relative">{children}</div>
-      </main>
-      <AppFooter />
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <div className="relative flex min-h-screen flex-col">
+          <AppHeader />
+          <main className="flex-1">
+            <div className="container relative">{children}</div>
+          </main>
+          <AppFooter />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -8,7 +8,7 @@ import { useAddresses } from "@/hooks/use-addresses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import { AlertCircle, CreditCard, ShoppingBag, Trash2 } from "lucide-react";
+import { AlertCircle, CreditCard, ShoppingBag, Trash2, Share2 } from "lucide-react";
 import { CartItemControls } from "@/components/cart-item-controls";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -227,6 +227,27 @@ export default function CartPage() {
     router.push(url);
   };
 
+  const handleShare = () => {
+    const header = "Check out my haul from Amazon Simulator! 🛍️\n\n";
+    const items = cart.map(item => `- ${item.product.name} (x${item.quantity})`).join('\n');
+    const footer = `\n\nTotal: ${formatCurrency(orderTotal)}`;
+    const summary = header + items + footer;
+
+    navigator.clipboard.writeText(summary).then(() => {
+        toast({
+            title: "Copied to clipboard!",
+            description: "Your cart summary is ready to be shared.",
+        });
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        toast({
+            variant: "destructive",
+            title: "Failed to copy",
+            description: "Could not copy cart to clipboard.",
+        });
+    });
+  };
+
   return (
     <>
     <ProcessingOverlay show={isProcessing} status={processingStatus} />
@@ -324,6 +345,11 @@ export default function CartPage() {
                         </Alert>
                     )}
                  </div>
+                 <Separator />
+                 <Button variant="outline" className="w-full" onClick={handleShare}>
+                    <Share2 className="mr-2" />
+                    Share Your Haul
+                 </Button>
               </CardContent>
               <CardFooter>
                 <Button className="w-full" size="lg" onClick={handleCheckoutClick} disabled={!selectedAddressId}>
