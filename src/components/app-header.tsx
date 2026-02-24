@@ -1,20 +1,17 @@
 "use client";
 import Link from "next/link";
-import { ShoppingCart, Wallet, User, Star, Receipt, Calendar } from "lucide-react";
+import { ShoppingCart, Wallet, User, Star, Receipt } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { Badge } from "./ui/badge";
 import { usePrime } from "@/hooks/use-prime";
-import { useDate } from "@/hooks/use-date";
-import { format } from "date-fns";
 
 export function AppHeader() {
   const { balance } = useWallet();
   const { itemCount } = useCart();
   const { isPrime } = usePrime();
-  const { currentDate } = useDate();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -25,55 +22,50 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <div className="flex gap-6 md:gap-10 items-center">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-6">
           <Logo isPrime={isPrime} />
-          <nav className="hidden gap-6 md:flex">
+          <nav className="hidden items-center gap-6 md:flex">
             <Link
               href="/"
-              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Shop
             </Link>
             <Link
               href="/orders"
-              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Orders
             </Link>
-             <Link
+            <Link
               href="/account/affirm"
-              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Affirm
             </Link>
              <Link
               href="/prime-deals"
-              className="flex items-center gap-1 text-sm font-medium text-primary/90 transition-colors hover:text-primary"
+              className="flex items-center gap-1.5 text-sm font-bold text-primary/90 transition-colors hover:text-primary"
             >
               <Star className="w-4 h-4 fill-primary" />
-              Prime Deals
+              <span>Prime Deals</span>
             </Link>
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-2">
-            <div className="hidden sm:flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm font-medium">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>{format(currentDate, "MMM d, yyyy")}</span>
-            </div>
+        <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm font-medium">
                 <Wallet className="h-4 w-4 text-muted-foreground" />
                 <span>{formatCurrency(balance)}</span>
             </div>
             <Button asChild variant="ghost" size="icon" className="relative">
               <Link href="/cart">
-                <ShoppingCart />
+                <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -right-2 -top-2 h-6 w-6 justify-center rounded-full p-0 text-xs"
+                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs"
                   >
                     {itemCount}
                   </Badge>
@@ -83,11 +75,10 @@ export function AppHeader() {
             </Button>
             <Button asChild variant="ghost" size="icon">
                 <Link href="/account">
-                    <User />
+                    <User className="h-5 w-5" />
                     <span className="sr-only">Account</span>
                 </Link>
             </Button>
-          </nav>
         </div>
       </div>
     </header>
