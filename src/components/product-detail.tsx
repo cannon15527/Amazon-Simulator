@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -30,6 +31,7 @@ import { PrimeSignupPromo } from "./prime-signup-promo";
 interface ProductDetailProps {
   product: Product;
   originalPrice?: number;
+  isSponsored?: boolean;
   onClose: () => void;
 }
 
@@ -66,7 +68,7 @@ const fakeReviews = [
 ];
 
 
-export function ProductDetail({ product, originalPrice, onClose }: ProductDetailProps) {
+export function ProductDetail({ product, originalPrice, isSponsored, onClose }: ProductDetailProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const router = useRouter();
@@ -270,6 +272,7 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
       <div className="flex-1 overflow-y-auto">
         <DialogHeader className="p-6 text-left">
           <DialogTitle className="font-headline text-2xl">{product.name}</DialogTitle>
+          {isSponsored && <p className="text-xs text-muted-foreground font-semibold">Sponsored Listing</p>}
           <DialogDescription className="pt-2">{product.description}</DialogDescription>
         </DialogHeader>
 

@@ -159,7 +159,7 @@ export default function ProductsPage() {
         </section>
 
         <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Items</h2>
+            <h2 className="text-xl font-semibold tracking-tight mb-6">Sponsored Recommendations</h2>
             <Carousel
                 opts={{
                     align: "start",
@@ -169,9 +169,9 @@ export default function ProductsPage() {
             >
                 <CarouselContent>
                     {featuredProducts.map((product) => (
-                        <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
+                        <CarouselItem key={product.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4">
                             <div className="p-1">
-                               <ProductCard product={product} />
+                               <ProductCard product={product} isSponsored={true} />
                             </div>
                         </CarouselItem>
                     ))}

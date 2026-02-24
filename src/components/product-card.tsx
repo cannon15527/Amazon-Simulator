@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -22,9 +23,10 @@ import { ProductDetail } from "./product-detail";
 interface ProductCardProps {
   product: Product;
   originalPrice?: number;
+  isSponsored?: boolean;
 }
 
-export function ProductCard({ product, originalPrice }: ProductCardProps) {
+export function ProductCard({ product, originalPrice, isSponsored }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,6 +61,11 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
                   className="object-cover"
                   data-ai-hint={product.imageHint}
                 />
+                 {isSponsored && (
+                  <Badge variant="outline" className="absolute left-2 top-2 bg-background/80 backdrop-blur-sm">
+                      Sponsored
+                  </Badge>
+                )}
                 {originalPrice && (
                   <Badge variant="destructive" className="absolute right-2 top-2 flex items-center gap-1">
                       <BadgePercent className="h-4 w-4" /> 50% OFF
@@ -92,7 +99,7 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
         </CardFooter>
       </Card>
       <DialogContent className="p-0 max-w-md gap-0 overflow-hidden rounded-lg">
-        <ProductDetail product={product} originalPrice={originalPrice} onClose={() => setIsDialogOpen(false)} />
+        <ProductDetail product={product} originalPrice={originalPrice} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );
