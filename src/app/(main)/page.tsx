@@ -199,30 +199,37 @@ export default function ProductsPage() {
                 </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 mb-8">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
                 {categories.map((category) => (
                 <Button
                     key={category}
                     variant={selectedCategory === category && !activeSearch ? "default" : "secondary"}
                     size="sm"
                     onClick={() => handleCategoryClick(category)}
+                    className="rounded-full px-4"
                 >
                     {category}
                 </Button>
                 ))}
             </div>
 
-            {activeSearch && (
-                <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg mb-8">
-                    <p className="text-sm text-muted-foreground">
-                        Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
-                    </p>
-                    <Button variant="ghost" size="sm" onClick={clearSearch}>
-                        <XCircle className="mr-2"/>
-                        Clear Search
-                    </Button>
-                </div>
-            )}
+            <div className="mb-8">
+              {activeSearch ? (
+                  <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                          Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
+                      </p>
+                      <Button variant="ghost" size="sm" onClick={clearSearch}>
+                          <XCircle className="mr-2"/>
+                          Clear Search
+                      </Button>
+                  </div>
+              ) : (
+                  <p className="text-sm text-muted-foreground py-3">
+                    Showing {paginatedProducts.length} of {filteredProducts.length} products
+                  </p>
+              )}
+            </div>
 
             {paginatedProducts.length > 0 ? (
                 <>
