@@ -78,16 +78,21 @@ export default function CartPage() {
     const financeSuccess = searchParams.get('finance_success') === 'true';
     const returnContext = searchParams.get('return_context');
 
-    const planDuration = searchParams.get('duration');
-    const planInterest = searchParams.get('interest');
-    const planTotal = searchParams.get('total');
-
     if ((paypalSuccess || financeSuccess) && !processingRef.current) {
       
       processingRef.current = true;
       setIsProcessing(true);
       setProcessingStatus('processing');
-      router.replace('/cart', { scroll: false });
+      
+      // Use router.replace to remove query params from URL without reloading
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('paypal_success');
+      newUrl.searchParams.delete('finance_success');
+      newUrl.searchParams.delete('return_context');
+      newUrl.searchParams.delete('duration');
+      newUrl.searchParams.delete('interest');
+      newUrl.searchParams.delete('total');
+      router.replace(newUrl.pathname + newUrl.search, { scroll: false });
       
       setTimeout(() => {
         let orderProcessed = false;
@@ -95,14 +100,14 @@ export default function CartPage() {
             const quickCheckoutDataRaw = localStorage.getItem('quick_checkout_context');
             if (quickCheckoutDataRaw) {
                 try {
-                    const { productId, addressId, total } = JSON.parse(quickCheckoutDataRaw);
+                    const { productId, addressId, total, duration, interest } = JSON.parse(quickCheckoutDataRaw);
                     const product = products.find(p => p.id === productId);
                     const address = addresses.find(a => a.id === addressId);
 
                     if (product && address) {
-                         if (financeSuccess && planDuration && planInterest && planTotal) {
+                         if (financeSuccess && duration && interest && total) {
                              const newOrder = addOrder([{ product, quantity: 1 }], total, address);
-                             addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
+                             addFinancePlan(newOrder.id, total, Number(duration), Number(interest));
                              setProcessingStatus('success');
                              toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
                              orderProcessed = true;
@@ -128,28 +133,37 @@ export default function CartPage() {
                  toast({ variant: "destructive", title: "Checkout Failed", description: "Could not retrieve checkout information." });
             }
         } else { // Regular cart checkout
-            const shippingAddress = addresses.find(a => a.id === selectedAddressId);
+            const checkoutAddressId = localStorage.getItem('simushop_checkout_address_id');
+            const shippingAddress = addresses.find(a => a.id === checkoutAddressId);
+            
+            const planDuration = searchParams.get('duration');
+            const planInterest = searchParams.get('interest');
+            const planTotal = searchParams.get('total');
+
             if (financeSuccess) {
                 if (!shippingAddress || !planDuration || !planInterest || !planTotal || cart.length === 0) {
                     setProcessingStatus('declined');
                     toast({ variant: "destructive", title: "Financing Failed", description: "Missing plan or cart details." });
                 } else {
-                    const newOrder = addOrder(cart, orderTotal, shippingAddress);
+                    const newOrder = addOrder(cart, Number(planTotal), shippingAddress);
                     addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
                     clearCart();
                     setProcessingStatus('success');
                     toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
                 }
             } else { // PayPal
-                if (balance < orderTotal || cart.length === 0) {
+                if (balance < orderTotal || cart.length === 0 || !shippingAddress) {
                     setProcessingStatus('declined');
-                    toast({ variant: "destructive", title: "Transaction Declined", description: `Insufficient funds or empty cart.` });
+                    toast({ variant: "destructive", title: "Transaction Declined", description: `Insufficient funds, empty cart, or missing address.` });
                 } else {
                     deduct(orderTotal);
-                    processCartOrder();
+                    addOrder(cart, orderTotal, shippingAddress);
+                    clearCart();
+                    toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
                     setProcessingStatus('success');
                 }
             }
+             localStorage.removeItem('simushop_checkout_address_id');
         }
         
         setTimeout(() => {
@@ -159,7 +173,7 @@ export default function CartPage() {
 
       }, 3000);
     }
-  }, [searchParams, cart, selectedAddressId, processCartOrder, router, balance, orderTotal, toast, addresses, addFinancePlan, addOrder, clearCart, deduct]);
+  }, [searchParams, cart, balance, orderTotal, toast, addresses, addFinancePlan, addOrder, clearCart, deduct, router]);
 
 
   const handleCheckoutClick = () => {
@@ -190,6 +204,22 @@ export default function CartPage() {
         setTimeout(() => setIsProcessing(false), 2000);
       }
     }, 3000);
+  };
+  
+  const handleExternalRedirect = (paymentType: 'paypal' | 'finance') => {
+    if (!selectedAddressId) return; // Should be disabled anyway
+    
+    // For regular cart, store the selected address ID
+    localStorage.setItem('simushop_checkout_address_id', selectedAddressId);
+    
+    let url = '';
+    if (paymentType === 'paypal') {
+        url = `/paypal-checkout?total=${orderTotal}`;
+    } else {
+        url = `/finance-checkout?total=${orderTotal}`;
+    }
+
+    router.push(url);
   };
 
   return (
@@ -306,6 +336,8 @@ export default function CartPage() {
         onOpenChange={setIsPaymentDialogOpen}
         onPaymentSuccess={handleCardPayment}
         total={orderTotal}
+        onPayPalClick={() => handleExternalRedirect('paypal')}
+        onFinanceClick={() => handleExternalRedirect('finance')}
     />
     </>
   );
