@@ -249,7 +249,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>Free</span>
+                  <span>Free (via wormhole)</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">

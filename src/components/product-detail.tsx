@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Zap, CreditCard, AlertCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ShoppingCart, Zap, CreditCard, AlertCircle, Star } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { useWallet } from "@/hooks/use-wallet";
 import { useOrders } from "@/hooks/use-orders";
 import { useAddresses } from "@/hooks/use-addresses";
@@ -23,6 +23,7 @@ import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import Link from "next/link";
 import { PaymentDialog } from "./payment-dialog";
 import { ProcessingOverlay } from "./processing-overlay";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 interface ProductDetailProps {
   product: Product;
@@ -33,6 +34,35 @@ interface ProductDetailProps {
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
 };
+
+const fakeReviews = [
+  {
+    author: "CosmicCharlie",
+    rating: 5,
+    comment: "Changed my life. My toast is now a superposition of breakfast and art. 10/10 would question reality again.",
+  },
+  {
+    author: "QuantumQuibbler",
+    rating: 2,
+    comment: "Got the 'surprise' setting. It toasted a tiny, angry gargoyle. It's cute, but it judges my coffee. Instructions unclear.",
+  },
+  {
+    author: "Sir Reginald P. IV",
+    rating: 5,
+    comment: "An exquisite piece of temporal engineering! My rubber chicken arrived yesterday, last week. Splendid!",
+  },
+  {
+    author: "GalaxyExplorer",
+    rating: 4,
+    comment: "The portable black hole is great for tidying up, but it ate my homework. And my car keys. Use with caution.",
+  },
+  {
+    author: "MundaneMatt",
+    rating: 1,
+    comment: "The invisible dog leash is TOO effective. I haven't seen Sparky in days. Please help.",
+  }
+];
+
 
 export function ProductDetail({ product, originalPrice, onClose }: ProductDetailProps) {
   const { addToCart } = useCart();
@@ -51,6 +81,10 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
 
   const taxAmount = product.price * SALES_TAX_RATE;
   const orderTotal = product.price + taxAmount;
+
+  const selectedReviews = useMemo(() => {
+    return [...fakeReviews].sort(() => 0.5 - Math.random()).slice(0, 2);
+  }, [product.id]);
 
   useEffect(() => {
     const defaultAddress = getDefaultAddress();
@@ -157,8 +191,8 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
                             <span>{formatCurrency(taxAmount)}</span>
                         </div>
                         <div className="flex justify-between">
-                        <span>Shipping</span>
-                        <span>Free</span>
+                            <span>Shipping</span>
+                            <span>Free (via wormhole)</span>
                         </div>
                         <Separator />
                         <div className="flex justify-between font-bold text-lg">
@@ -229,6 +263,40 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
           <DialogTitle className="font-headline text-2xl">{product.name}</DialogTitle>
           <DialogDescription className="pt-2">{product.description}</DialogDescription>
         </DialogHeader>
+
+        <div className="p-6 pt-2 space-y-6">
+            <Separator />
+            <div>
+                <h3 className="text-sm font-medium tracking-wider uppercase text-muted-foreground mb-2">Shipping Memo</h3>
+                <p className="text-sm text-foreground/80">
+                    Estimated delivery: sometime last week via paradox-proof courier. Please disregard any temporal echoes upon arrival. Signature required from a past or future version of yourself.
+                </p>
+            </div>
+            <div>
+                <h3 className="text-sm font-medium tracking-wider uppercase text-muted-foreground mb-4">Whispers from the Void (Reviews)</h3>
+                <div className="space-y-6">
+                    {selectedReviews.map((review, index) => (
+                    <div key={index} className="flex gap-4">
+                        <Avatar className="flex-shrink-0">
+                            <AvatarFallback>{review.author.substring(0, 2)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-grow">
+                            <div className="flex items-center justify-between">
+                                <p className="font-semibold text-sm">{review.author}</p>
+                                <div className="flex items-center gap-0.5">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'text-primary fill-primary' : 'text-muted-foreground/50'}`} />
+                                    ))}
+                                </div>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{review.comment}</p>
+                        </div>
+                    </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+
       </div>
       
       <div className="p-6 border-t bg-secondary/30 mt-auto">
