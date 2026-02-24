@@ -1,7 +1,7 @@
 "use client";
 
 import type { CartItem, Product } from "@/lib/types";
-import { createContext, useState, type ReactNode, useMemo } from "react";
+import { createContext, useState, type ReactNode, useMemo, useCallback } from "react";
 
 interface CartContextType {
   cart: CartItem[];
@@ -11,6 +11,7 @@ interface CartContextType {
   clearCart: () => void;
   cartTotal: number;
   itemCount: number;
+  isAnimating: boolean;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(
@@ -19,6 +20,13 @@ export const CartContext = createContext<CartContextType | undefined>(
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const triggerAnimation = useCallback(() => {
+    setIsAnimating(true);
+    const timer = setTimeout(() => setIsAnimating(false), 1000); // Animation lasts 1 second
+    return () => clearTimeout(timer);
+  }, []);
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setCart((prevCart) => {
@@ -34,6 +42,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prevCart, { product, quantity }];
     });
+    triggerAnimation();
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -85,6 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         cartTotal,
         itemCount,
+        isAnimating,
       }}
     >
       {children}

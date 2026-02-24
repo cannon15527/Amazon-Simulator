@@ -6,6 +6,7 @@ export interface Product {
   imageUrl: string;
   imageHint: string;
   category: string;
+  legalDisclaimer?: string;
 }
 
 export interface Address {

@@ -27,6 +27,7 @@ import { ProcessingOverlay } from "./processing-overlay";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { usePrime } from "@/hooks/use-prime";
 import { PrimeSignupPromo } from "./prime-signup-promo";
+import { Badge } from "./ui/badge";
 
 interface ProductDetailProps {
   product: Product;
@@ -272,6 +273,11 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
       <div className="flex-1 overflow-y-auto">
         <DialogHeader className="p-6 text-left">
           <DialogTitle className="font-headline text-2xl">{product.name}</DialogTitle>
+            {product.legalDisclaimer && (
+                <Badge variant="outline" className="mt-1 border-amber-500 text-amber-600 w-fit">
+                    {product.legalDisclaimer}
+                </Badge>
+            )}
           {isSponsored && <p className="text-xs text-muted-foreground font-semibold">Sponsored Listing</p>}
           <DialogDescription className="pt-2">{product.description}</DialogDescription>
         </DialogHeader>

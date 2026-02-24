@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ProductDetail } from "./product-detail";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 interface ProductCardProps {
   product: Product;
@@ -74,6 +75,20 @@ export function ProductCard({ product, originalPrice, isSponsored }: ProductCard
               </div>
               <div className="p-4 pb-2">
                 <CardTitle className="font-headline text-base h-12">{product.name}</CardTitle>
+                 {product.legalDisclaimer && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge variant="outline" className="mt-1 border-amber-500 text-amber-600">
+                          Legally Distinct
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{product.legalDisclaimer}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </CardHeader>
             <CardContent className="flex-grow p-4 pt-0">

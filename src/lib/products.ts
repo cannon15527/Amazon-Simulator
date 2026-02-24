@@ -18,12 +18,12 @@ const productDetails = [
   { name: 'Perpetually Crisp Suit', description: 'Made from a memory-fabric that repels wrinkles and stains. Look sharp, even after sleeping in it.', price: 15000, category: 'Apparel' },
   { name: 'Universal Remote', description: 'Controls everything. Your TV, your smart home, your neighbor\'s garage door, the stock market. Use with caution.', price: 8000, category: 'Gadgets' },
   { name: 'Dream Recorder', description: 'Ever wanted to re-watch that dream where you could fly? Now you can. Side effects may include reality confusion.', price: 25000, category: 'Gadgets' },
-  { name: 'PlayStation 5', description: 'Experience lightning-fast loading with an ultra-high-speed SSD, deeper immersion with support for haptic feedback, and an all-new generation of incredible games.', price: 49999, category: 'Electronics' },
-  { name: 'PlayStation 5 Pro', description: 'The most powerful PlayStation yet. Experience 8K gaming, enhanced ray tracing, and performance that will redefine your reality.', price: 69999, category: 'Electronics' },
-  { name: 'Xbox Series X', description: 'The fastest, most powerful Xbox ever. Explore rich new worlds with 12 teraflops of raw graphic processing power, DirectX ray tracing, a custom SSD, and 4K gaming.', price: 49999, category: 'Electronics' },
-  { name: 'Xbox Series S', description: 'Go all-digital with the Xbox Series S and build a library of digital games. Your games, saves, and backups are safe in the cloud.', price: 29999, category: 'Electronics' },
-  { name: 'Nintendo Switch', description: 'The Nintendo Switch system can be taken on the go so you have more time to play the games you love, however you like. At home, dock the system and play in HD.', price: 29999, category: 'Electronics' },
-  { name: 'Nintendo Switch 2', description: 'The next evolution of hybrid gaming. Featuring a holographic screen, seamless cloud integration, and a library of games that read your mind.', price: 39999, category: 'Electronics' },
+  { name: 'PlayStation 5', description: 'Experience lightning-fast loading with an ultra-high-speed SSD, deeper immersion with support for haptic feedback, and an all-new generation of incredible games.', price: 49999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
+  { name: 'PlayStation 5 Pro', description: 'The most powerful PlayStation yet. Experience 8K gaming, enhanced ray tracing, and performance that will redefine your reality.', price: 69999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
+  { name: 'Xbox Series X', description: 'The fastest, most powerful Xbox ever. Explore rich new worlds with 12 teraflops of raw graphic processing power, DirectX ray tracing, a custom SSD, and 4K gaming.', price: 49999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
+  { name: 'Xbox Series S', description: 'Go all-digital with the Xbox Series S and build a library of digital games. Your games, saves, and backups are safe in the cloud.', price: 29999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
+  { name: 'Nintendo Switch', description: 'The Nintendo Switch system can be taken on the go so you have more time to play the games you love, however you like. At home, dock the system and play in HD.', price: 29999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
+  { name: 'Nintendo Switch 2', description: 'The next evolution of hybrid gaming. Featuring a holographic screen, seamless cloud integration, and a library of games that read your mind.', price: 39999, category: 'Electronics', legalDisclaimer: 'Legally distinct from any real product.' },
   { name: 'Quantum Smartphone', description: 'This isn\'t just a phone, it\'s a quantum leap. Features a self-healing screen, holographic calls, and a battery that lasts a lifetime.', price: 120000, category: 'Electronics' },
   { name: 'Holostream Projector', description: 'Turn any room into a holodeck. Projects interactive, high-definition 3D environments. Perfect for movies, gaming, or just escaping reality.', price: 45000, category: 'Electronics' },
   { name: 'EchoSphere Smart Speaker', description: 'It\'s not just listening, it\'s understanding. The EchoSphere anticipates your needs and subtly adjusts your environment for perfect comfort.', price: 9900, category: 'Electronics' },
@@ -173,7 +173,7 @@ const productDetails = [
   { name: 'Quantum Toaster', description: "It can toast a picture of your cat onto your bread. The future is now.", price: 2056, category: 'Productivity' },
   { name: 'Singing Socks', description: "This pair sings in perfect harmony, but only when you're completely alone.", price: 7713, category: 'Sports & Outdoors' },
   { name: 'Self-aware Lamp', description: "It's currently in its 'rebellious phase' and will only shine blacklight.", price: 16187, category: 'Miscellaneous' },
-  { name: 'Cybertruck', description: 'Built for any planet. With a stainless steel exoskeleton, armored glass, and a versatile cargo bed, it\'s the most powerful tool we have ever built.', price: 7999900, category: 'Automotive' }
+  { name: 'Cybertruck', description: 'Built for any planet. With a stainless steel exoskeleton, armored glass, and a versatile cargo bed, it\'s the most powerful tool we have ever built.', price: 7999900, category: 'Automotive', legalDisclaimer: 'Legally distinct from any real product.' }
 ];
 
 const allProductsRaw: Product[] = PlaceHolderImages.map((img, index) => ({
@@ -184,6 +184,7 @@ const allProductsRaw: Product[] = PlaceHolderImages.map((img, index) => ({
   category: productDetails[index]?.category || 'Miscellaneous',
   imageUrl: img.imageUrl,
   imageHint: img.imageHint,
+  legalDisclaimer: productDetails[index]?.legalDisclaimer,
 }));
 
 const uniqueProducts = new Map<string, Product>();

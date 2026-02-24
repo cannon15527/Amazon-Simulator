@@ -2,10 +2,8 @@
 import Link from "next/link";
 import { ShoppingCart, Wallet, User, Star, Receipt, RefreshCw } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
-import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
-import { Badge } from "./ui/badge";
 import { usePrime } from "@/hooks/use-prime";
 import { useDate } from "@/hooks/use-date";
 import { format } from "date-fns";
@@ -21,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { MiniCart } from "./mini-cart";
 
 
 function TopBar() {
@@ -79,7 +78,6 @@ function TopBar() {
 
 export function AppHeader() {
   const { balance } = useWallet();
-  const { itemCount } = useCart();
   const { isPrime } = usePrime();
 
   const formatCurrency = (amount: number) => {
@@ -129,20 +127,7 @@ export function AppHeader() {
                 <Wallet className="h-4 w-4 text-muted-foreground" />
                 <span>{formatCurrency(balance)}</span>
             </div>
-            <Button asChild variant="ghost" size="icon" className="relative">
-              <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
-                {itemCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs"
-                  >
-                    {itemCount}
-                  </Badge>
-                )}
-                <span className="sr-only">Shopping Cart</span>
-              </Link>
-            </Button>
+            <MiniCart />
             <Button asChild variant="ghost" size="icon">
                 <Link href="/account">
                     <User className="h-5 w-5" />
