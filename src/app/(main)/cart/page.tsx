@@ -20,6 +20,7 @@ import { PaymentDialog } from "@/components/payment-dialog";
 import { ProcessingOverlay } from "@/components/processing-overlay";
 import { SALES_TAX_RATE } from "@/lib/constants";
 import { useFinance } from "@/hooks/use-finance";
+import { products } from "@/lib/products";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -43,7 +44,7 @@ export default function CartPage() {
   const taxAmount = cartTotal * SALES_TAX_RATE;
   const orderTotal = cartTotal + taxAmount;
   
-  const processOrder = useCallback(() => {
+  const processCartOrder = useCallback(() => {
     if (cart.length === 0) return;
 
     const shippingAddress = addresses.find(a => a.id === selectedAddressId);
@@ -67,46 +68,79 @@ export default function CartPage() {
  useEffect(() => {
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
     const financeSuccess = searchParams.get('finance_success') === 'true';
+    const returnContext = searchParams.get('return_context');
+
     const planDuration = searchParams.get('duration');
     const planInterest = searchParams.get('interest');
     const planTotal = searchParams.get('total');
 
-    if ((paypalSuccess || financeSuccess) && cart.length > 0 && selectedAddressId && !processingRef.current) {
+    if ((paypalSuccess || financeSuccess) && !processingRef.current) {
+      
       processingRef.current = true;
       setIsProcessing(true);
       setProcessingStatus('processing');
       router.replace('/cart', { scroll: false });
       
       setTimeout(() => {
-        const shippingAddress = addresses.find(a => a.id === selectedAddressId);
+        let orderProcessed = false;
+        if (returnContext === 'quick-checkout') {
+            const quickCheckoutDataRaw = localStorage.getItem('quick_checkout_context');
+            if (quickCheckoutDataRaw) {
+                try {
+                    const { productId, addressId, total } = JSON.parse(quickCheckoutDataRaw);
+                    const product = products.find(p => p.id === productId);
+                    const address = addresses.find(a => a.id === addressId);
 
-        if (financeSuccess) {
-            if (!shippingAddress || !planDuration || !planInterest || !planTotal) {
-                setProcessingStatus('declined');
-                 toast({ variant: "destructive", title: "Financing Failed", description: "Missing plan details." });
-                 setTimeout(() => {
-                    setIsProcessing(false);
-                    processingRef.current = false;
-                }, 2000);
-                return;
+                    if (product && address) {
+                         if (financeSuccess && planDuration && planInterest && planTotal) {
+                             const newOrder = addOrder([{ product, quantity: 1 }], total, address);
+                             addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
+                             setProcessingStatus('success');
+                             toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
+                             orderProcessed = true;
+                         } else if (paypalSuccess) {
+                              if (balance < total) {
+                                setProcessingStatus('declined');
+                                toast({ variant: "destructive", title: "Transaction Declined", description: `You have insufficient funds.` });
+                              } else {
+                                deduct(total);
+                                addOrder([{ product, quantity: 1 }], total, address);
+                                setProcessingStatus('success');
+                                toast({ title: "Purchase Complete!", description: "Your virtual order has been placed." });
+                                orderProcessed = true;
+                              }
+                         }
+                    }
+                } finally {
+                    localStorage.removeItem('quick_checkout_context');
+                }
             }
-            const newOrder = addOrder(cart, orderTotal, shippingAddress);
-            addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
-            clearCart();
-            setProcessingStatus('success');
-            toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
-        } else { // PayPal
-            if (balance < orderTotal) {
-                setProcessingStatus('declined');
-                toast({
-                    variant: "destructive",
-                    title: "Transaction Declined",
-                    description: `You have insufficient funds. You need ${formatCurrency(orderTotal)}.`,
-                });
-            } else {
-                deduct(orderTotal);
-                processOrder();
-                setProcessingStatus('success');
+            if (!orderProcessed) {
+                 setProcessingStatus('declined');
+                 toast({ variant: "destructive", title: "Checkout Failed", description: "Could not retrieve checkout information." });
+            }
+        } else { // Regular cart checkout
+            const shippingAddress = addresses.find(a => a.id === selectedAddressId);
+            if (financeSuccess) {
+                if (!shippingAddress || !planDuration || !planInterest || !planTotal || cart.length === 0) {
+                    setProcessingStatus('declined');
+                    toast({ variant: "destructive", title: "Financing Failed", description: "Missing plan or cart details." });
+                } else {
+                    const newOrder = addOrder(cart, orderTotal, shippingAddress);
+                    addFinancePlan(newOrder.id, Number(planTotal), Number(planDuration), Number(planInterest));
+                    clearCart();
+                    setProcessingStatus('success');
+                    toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
+                }
+            } else { // PayPal
+                if (balance < orderTotal || cart.length === 0) {
+                    setProcessingStatus('declined');
+                    toast({ variant: "destructive", title: "Transaction Declined", description: `Insufficient funds or empty cart.` });
+                } else {
+                    deduct(orderTotal);
+                    processCartOrder();
+                    setProcessingStatus('success');
+                }
             }
         }
         
@@ -117,7 +151,7 @@ export default function CartPage() {
 
       }, 3000);
     }
-  }, [searchParams, cart, selectedAddressId, processOrder, router, balance, orderTotal, toast, addresses, addFinancePlan, addOrder, clearCart, deduct]);
+  }, [searchParams, cart, selectedAddressId, processCartOrder, router, balance, orderTotal, toast, addresses, addFinancePlan, addOrder, clearCart, deduct]);
 
 
   const handleCheckoutClick = () => {
@@ -143,7 +177,7 @@ export default function CartPage() {
         setTimeout(() => setIsProcessing(false), 2000);
       } else {
         deduct(orderTotal);
-        processOrder();
+        processCartOrder();
         setProcessingStatus('success');
         setTimeout(() => setIsProcessing(false), 2000);
       }

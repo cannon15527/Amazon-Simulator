@@ -38,9 +38,11 @@ interface PaymentDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   onPaymentSuccess: () => void;
   total: number;
+  onPayPalClick?: () => void;
+  onFinanceClick?: () => void;
 }
 
-export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }: PaymentDialogProps) {
+export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, onPayPalClick, onFinanceClick }: PaymentDialogProps) {
   const router = useRouter();
   const showFinancing = total > 5000; // $50 in cents
 
@@ -64,11 +66,19 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
   }
 
   function handlePayPalRedirect() {
-    router.push(`/paypal-checkout?total=${total}`);
+    if (onPayPalClick) {
+      onPayPalClick();
+    } else {
+      router.push(`/paypal-checkout?total=${total}`);
+    }
   }
 
   function handleFinanceRedirect() {
-    router.push(`/finance-checkout?total=${total}`);
+    if (onFinanceClick) {
+      onFinanceClick();
+    } else {
+      router.push(`/finance-checkout?total=${total}`);
+    }
   }
 
   return (
@@ -162,7 +172,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total }:
               <p className="text-sm text-muted-foreground">You'll be redirected to PayPal to complete your purchase securely.</p>
               <Button type="button" className="w-full" size="lg" onClick={handlePayPalRedirect}>
                 <ExternalLink className="mr-2" />
-                Sign in on external website
+                Continue with PayPal
               </Button>
              </div>
           </TabsContent>
