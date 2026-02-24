@@ -50,7 +50,7 @@ export function AddressCard({ address }: { address: Address }) {
   }
 
   return (
-    <Card className="flex flex-col hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1">
+    <Card className="flex flex-col">
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardTitle>{address.name}</CardTitle>

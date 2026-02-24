@@ -47,7 +47,7 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <Card className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2">
+      <Card className="flex flex-col overflow-hidden">
         <DialogTrigger asChild>
           <div className="cursor-pointer">
             <CardHeader className="p-0">
