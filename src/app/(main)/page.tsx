@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -14,6 +15,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 const PRODUCTS_PER_PAGE = 12;
@@ -25,6 +33,7 @@ export default function ProductsPage() {
   const [activeSearch, setActiveSearch] = useState("");
   const [userName, setUserName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState("alpha-asc");
 
   useEffect(() => {
     const name = localStorage.getItem("simushop_user_name");
@@ -50,7 +59,7 @@ export default function ProductsPage() {
   };
 
   const filteredProducts = useMemo(() => {
-    let results = products;
+    let results = [...products];
 
     if (activeSearch.trim() !== "") {
       const lowercasedQuery = activeSearch.toLowerCase();
@@ -60,11 +69,28 @@ export default function ProductsPage() {
           p.description.toLowerCase().includes(lowercasedQuery)
       );
     } else if (selectedCategory !== "All") {
-      results = products.filter((p) => p.category === selectedCategory);
+      results = results.filter((p) => p.category === selectedCategory);
+    }
+
+    switch (sortOption) {
+      case "price-asc":
+        results.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        results.sort((a, b) => b.price - a.price);
+        break;
+      case "alpha-asc":
+        results.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "alpha-desc":
+        results.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
     }
 
     return results;
-  }, [selectedCategory, activeSearch]);
+  }, [selectedCategory, activeSearch, sortOption]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -147,7 +173,23 @@ export default function ProductsPage() {
         </section>
 
         <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-6">Browse All Products</h2>
+             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+                <h2 className="text-2xl font-bold tracking-tight">Browse All Products</h2>
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                    <Select value={sortOption} onValueChange={setSortOption}>
+                        <SelectTrigger className="w-full md:w-[220px]">
+                            <SelectValue placeholder="Sort by..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="alpha-asc">Alphabetical: A-Z</SelectItem>
+                            <SelectItem value="alpha-desc">Alphabetical: Z-A</SelectItem>
+                            <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                            <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
             <div className="flex flex-wrap items-center gap-2 mb-8">
                 {categories.map((category) => (
                 <Button
