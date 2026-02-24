@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useOrders } from "@/hooks/use-orders";
@@ -72,7 +73,7 @@ export default function OrdersPage() {
                       order.status === "Delivered" ? "default" : "secondary"
                     }
                     className={
-                        order.status === 'Delivered' ? 'bg-green-600 text-white' : order.status === 'Shipped' ? 'bg-blue-500 text-white' : ''
+                        order.status === 'Delivered' ? 'bg-green-600 text-white hover:bg-green-600/90' : order.status === 'Shipped' ? 'bg-blue-500 text-white hover:bg-blue-500/90' : ''
                     }
                   >
                     {order.status}

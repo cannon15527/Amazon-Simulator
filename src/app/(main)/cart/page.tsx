@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCart } from "@/hooks/use-cart";
@@ -169,6 +170,7 @@ export default function CartPage() {
         setTimeout(() => {
             setIsProcessing(false);
             processingRef.current = false;
+            router.push('/orders');
         }, 2000);
 
       }, 3000);
@@ -201,7 +203,10 @@ export default function CartPage() {
         deduct(orderTotal);
         processCartOrder();
         setProcessingStatus('success');
-        setTimeout(() => setIsProcessing(false), 2000);
+        setTimeout(() => {
+          setIsProcessing(false);
+          router.push('/orders');
+        }, 2000);
       }
     }, 3000);
   };
