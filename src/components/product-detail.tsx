@@ -25,6 +25,7 @@ import { PaymentDialog } from "./payment-dialog";
 import { ProcessingOverlay } from "./processing-overlay";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { usePrime } from "@/hooks/use-prime";
+import { PrimeSignupPromo } from "./prime-signup-promo";
 
 interface ProductDetailProps {
   product: Product;
@@ -201,6 +202,7 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
                             <span>Shipping</span>
                             <span>{isPrime ? 'Free (Prime)' : formatCurrency(shippingCost)}</span>
                         </div>
+                        {!isPrime && shippingCost > 0 && <PrimeSignupPromo />}
                         <Separator />
                         <div className="flex justify-between font-bold text-lg">
                             <span>Total</span>

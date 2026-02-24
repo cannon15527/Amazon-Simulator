@@ -22,6 +22,7 @@ import { SALES_TAX_RATE } from "@/lib/constants";
 import { useFinance } from "@/hooks/use-finance";
 import { products } from "@/lib/products";
 import { usePrime } from "@/hooks/use-prime";
+import { PrimeSignupPromo } from "@/components/prime-signup-promo";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -258,6 +259,7 @@ export default function CartPage() {
                   <span>Shipping</span>
                   <span>{isPrime ? 'Free (Prime)' : formatCurrency(shippingCost)}</span>
                 </div>
+                {!isPrime && shippingCost > 0 && <PrimeSignupPromo />}
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
