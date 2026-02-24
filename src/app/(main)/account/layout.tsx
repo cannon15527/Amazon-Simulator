@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, Star, Wallet, Trash2 } from "lucide-react";
+import { MapPin, Star, Wallet, Trash2, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -28,9 +28,10 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const accountNav = [
-  { href: "/account/addresses", label: "Addresses", icon: MapPin },
-  { href: "/account/prime", label: "Prime", icon: Star },
-  { href: "/account/wallet", label: "Wallet", icon: Wallet },
+  { href: "/account/addresses", label: "Addresses" },
+  { href: "/account/prime", label: "Prime" },
+  { href: "/account/wallet", label: "Wallet" },
+  { href: "/account/affirm", label: "Affirm" },
 ];
 
 function DeleteAccountDialog() {
@@ -97,45 +98,38 @@ export default function AccountLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
+    <div className="flex flex-col gap-12 py-8 md:py-12">
+      <div className="text-center">
+        <h1 className="font-bold tracking-tight text-4xl md:text-5xl">
           Your Account
         </h1>
-        <p className="text-muted-foreground">
-          Manage your virtual profile and settings.
+        <p className="text-muted-foreground mt-2 text-lg">
+          Manage your profile, settings, and virtual life.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-        <aside className="md:col-span-1">
-          <nav className="flex flex-col gap-2">
-            {accountNav.map((item) => (
-              <Button
-                key={item.href}
-                asChild
-                variant="ghost"
-                className={cn(
-                  "justify-start",
-                  pathname.startsWith(item.href) && "bg-accent text-accent-foreground"
-                )}
-              >
-                <Link href={item.href}>
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.label}
-                </Link>
-              </Button>
-            ))}
-          </nav>
-        </aside>
-        <div className="md:col-span-3">{children}</div>
+      <nav className="flex items-center justify-center border-b">
+         {accountNav.map((item) => (
+            <Link key={item.href} href={item.href}
+              className={cn(
+                  "px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-primary -mb-px",
+                  pathname.startsWith(item.href) && "text-primary border-b-2 border-primary"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+      </nav>
+
+      <div className="max-w-4xl w-full mx-auto">
+        {children}
       </div>
       
-      <Separator />
+      <Separator className="my-8" />
 
-      <div className="space-y-4">
-          <h3 className="font-semibold text-xl text-destructive">Danger Zone</h3>
-          <Card className="border-destructive/50">
+      <div className="space-y-4 max-w-4xl w-full mx-auto">
+          <h3 className="font-semibold text-2xl text-destructive">Danger Zone</h3>
+          <Card className="border-destructive/50 bg-destructive/5">
               <CardHeader className="flex-row justify-between items-center">
                   <div>
                       <CardTitle className="text-lg">Reset All Data</CardTitle>

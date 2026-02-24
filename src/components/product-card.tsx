@@ -47,7 +47,7 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <Card className="flex flex-col overflow-hidden">
+      <Card className="flex flex-col overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
         <DialogTrigger asChild>
           <div className="cursor-pointer">
             <CardHeader className="p-0">
@@ -65,28 +65,28 @@ export function ProductCard({ product, originalPrice }: ProductCardProps) {
                   </Badge>
                 )}
               </div>
-              <div className="p-6 pb-2">
-                <CardTitle className="font-headline text-xl h-14">{product.name}</CardTitle>
+              <div className="p-4 pb-2">
+                <CardTitle className="font-headline text-base h-10">{product.name}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="flex-grow">
-              <CardDescription className="line-clamp-3">{product.description}</CardDescription>
+            <CardContent className="flex-grow p-4 pt-0">
+              <CardDescription className="line-clamp-2 text-xs">{product.description}</CardDescription>
             </CardContent>
           </div>
         </DialogTrigger>
-        <CardFooter className="flex items-center justify-between bg-secondary/30 p-4 mt-auto">
+        <CardFooter className="flex items-center justify-between p-4 mt-auto">
           <div className="flex flex-col items-start">
               {originalPrice && (
-                  <span className="text-sm text-muted-foreground line-through">
+                  <span className="text-xs text-muted-foreground line-through">
                       {formatCurrency(originalPrice)}
                   </span>
               )}
-              <div className="font-headline text-xl font-bold text-primary">
+              <div className="text-lg font-bold">
               {formatCurrency(product.price)}
               </div>
           </div>
           <Button onClick={handleAddToCart} size="sm">
-            <ShoppingCart className="mr-2" />
+            <ShoppingCart className="mr-2 h-4 w-4" />
             Add to Cart
           </Button>
         </CardFooter>

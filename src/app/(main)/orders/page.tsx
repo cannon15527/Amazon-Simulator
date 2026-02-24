@@ -28,18 +28,18 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
+    <div className="flex flex-col gap-8 py-8 md:py-12">
+      <div className="text-center">
+        <h1 className="font-bold tracking-tight text-4xl md:text-5xl">
           Your Orders
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-lg">
           Track your imaginary packages on their virtual journey.
         </p>
       </div>
 
       {orders.length === 0 ? (
-        <Card className="text-center py-16">
+        <Card className="text-center py-16 border-dashed">
           <CardHeader>
             <PackageSearch className="mx-auto h-12 w-12 text-muted-foreground" />
             <CardTitle className="mt-4">No orders yet</CardTitle>
@@ -107,7 +107,7 @@ export default function OrdersPage() {
                 </div>
                 <OrderProgress order={order} />
               </CardContent>
-               <CardFooter className="flex-col items-start bg-secondary/30 p-4">
+               <CardFooter className="flex-col items-start bg-muted/50 p-4">
                     <p className="text-sm font-medium">Shipping to:</p>
                     <p className="text-sm text-muted-foreground">{order.shippingAddress.name} - {order.shippingAddress.street}, {order.shippingAddress.city}</p>
                </CardFooter>

@@ -187,12 +187,12 @@ export default function CartPage() {
   return (
     <>
     <ProcessingOverlay show={isProcessing} status={processingStatus} />
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">Shopping Cart</h1>
+    <div className="flex flex-col gap-8 py-8 md:py-12">
+      <div className="text-center">
+        <h1 className="font-bold tracking-tight text-4xl md:text-5xl">Shopping Cart</h1>
       </div>
       {cart.length === 0 ? (
-        <Card className="text-center py-16">
+        <Card className="text-center py-16 border-dashed">
           <CardHeader>
             <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
             <CardTitle className="mt-4">Your cart is empty</CardTitle>
@@ -234,9 +234,9 @@ export default function CartPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="sticky top-20">
               <CardHeader>
-                <CardTitle className="font-headline">Order Summary</CardTitle>
+                <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">

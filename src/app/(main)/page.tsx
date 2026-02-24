@@ -52,7 +52,7 @@ export default function ProductsPage() {
       return products.filter((p) => p.category === selectedCategory);
     }
 
-    return products;
+    return results;
   }, [selectedCategory, activeSearch]);
 
   const handleCategoryClick = (category: string) => {
@@ -72,96 +72,82 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
-       <Alert className="mb-4 border-primary/30">
-        <Car className="h-4 w-4 text-primary" />
-        <AlertTitle className="font-bold text-primary">Vehicles are here!</AlertTitle>
-        <AlertDescription className="text-foreground/90">
-            Order online and get your car delivered to your driveway in 3-5 business days. <em className="text-xs opacity-80">*Terms Apply</em>
-        </AlertDescription>
-      </Alert>
-
-      <div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          {userName ? `Welcome to Amazon, ${userName}` : 'Welcome to Amazon'}
-        </h1>
-        <p className="text-muted-foreground">
-          Your one-stop shop for things that don't exist.
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        <form onSubmit={handleSearch} className="flex w-full gap-2">
-          <div className="relative flex-grow">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search for products..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Button type="submit">
-            <Search />
-            <span className="hidden md:inline ml-2">Search</span>
-          </Button>
-        </form>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Or filter by category:
-          </p>
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category && !activeSearch ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-      </div>
-      
-      {activeSearch && (
-        <div className="flex items-center justify-between bg-secondary/50 p-3 rounded-lg">
-            <p className="text-sm text-muted-foreground">
-                Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
+    <div className="flex flex-col gap-12 py-8 md:py-12">
+        <section className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+               {userName ? `Welcome, ${userName}` : 'Imagination, Delivered.'}
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+                Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
             </p>
-            <Button variant="ghost" size="sm" onClick={clearSearch}>
-                <XCircle className="mr-2"/>
-                Clear Search
-            </Button>
-        </div>
-      )}
+            <form onSubmit={handleSearch} className="flex max-w-lg mx-auto gap-2">
+              <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search for anti-gravity boots..."
+                  className="pl-10 h-11"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Button type="submit" size="lg">
+                Search
+              </Button>
+            </form>
+        </section>
 
+      <section>
+          <div className="flex flex-wrap items-center gap-2 mb-8">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category && !activeSearch ? "default" : "secondary"}
+                size="sm"
+                onClick={() => handleCategoryClick(category)}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
 
-      {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <Card className="text-center py-16 col-span-full">
-            <CardHeader>
-                <Search className="mx-auto h-12 w-12 text-muted-foreground" />
-                <CardTitle className="mt-4">No Products Found</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground">
-                    {activeSearch ? `Your search didn't match any products.` : "There are no products in this category."}
+          {activeSearch && (
+            <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg mb-8">
+                <p className="text-sm text-muted-foreground">
+                    Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
                 </p>
-            </CardContent>
-             <CardFooter className="justify-center">
-                 <Button onClick={clearAll}>
-                    Clear Search & Filters
-                 </Button>
-             </CardFooter>
-        </Card>
-      )}
+                <Button variant="ghost" size="sm" onClick={clearSearch}>
+                    <XCircle className="mr-2"/>
+                    Clear Search
+                </Button>
+            </div>
+          )}
+
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <Card className="text-center py-16 col-span-full border-dashed">
+                <CardHeader>
+                    <Search className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <CardTitle className="mt-4">No Products Found</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">
+                        {activeSearch ? `Your search didn't match any products.` : "There are no products in this category."}
+                    </p>
+                </CardContent>
+                <CardFooter className="justify-center">
+                    <Button onClick={clearAll}>
+                        Clear Search & Filters
+                    </Button>
+                </CardFooter>
+            </Card>
+          )}
+      </section>
     </div>
   );
 }

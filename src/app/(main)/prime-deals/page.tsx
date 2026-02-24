@@ -30,12 +30,12 @@ export default function PrimeDealsPage() {
 
   if (!isPrime) {
     return (
-        <div className="flex flex-col gap-8">
-            <div>
-                <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
+        <div className="flex flex-col gap-8 py-8 md:py-12">
+            <div className="text-center">
+                <h1 className="font-bold tracking-tight text-4xl md:text-5xl flex items-center justify-center gap-2">
                     <Star className="text-primary fill-primary"/> Prime Deals
                 </h1>
-                <p className="text-muted-foreground">Exclusive discounts for our Prime members.</p>
+                <p className="text-muted-foreground mt-2 text-lg">Exclusive discounts for our Prime members.</p>
             </div>
              <Card className="text-center py-16 bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-950/50">
                 <CardHeader>
@@ -57,12 +57,12 @@ export default function PrimeDealsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
-       <div>
-            <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
+    <div className="flex flex-col gap-8 py-8 md:py-12">
+       <div className="text-center">
+            <h1 className="font-bold tracking-tight text-4xl md:text-5xl flex items-center justify-center gap-2">
                 <Star className="text-primary fill-primary"/> Prime Deals
             </h1>
-            <p className="text-muted-foreground">Your exclusive 50% off discounts. Happy shopping!</p>
+            <p className="text-muted-foreground mt-2 text-lg">Your exclusive 50% off discounts. Happy shopping!</p>
         </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {dealProducts.map(({ product, originalPrice }) => (
