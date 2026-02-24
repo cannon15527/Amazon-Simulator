@@ -31,6 +31,8 @@ export default function FinanceCheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
+  const returnContext = searchParams.get('return_context');
+
   useEffect(() => {
     const totalParam = searchParams.get('total');
     if (totalParam) {
@@ -75,7 +77,11 @@ export default function FinanceCheckoutPage() {
     const interestRate = parseFloat(plan.interest) / 100;
 
     setTimeout(() => {
-        router.push(`/cart?finance_success=true&total=${total}&duration=${plan.duration}&interest=${interestRate}`);
+        let redirectUrl = `/cart?finance_success=true&total=${total}&duration=${plan.duration}&interest=${interestRate}`;
+        if (returnContext) {
+            redirectUrl += `&return_context=${returnContext}`;
+        }
+        router.push(redirectUrl);
     }, 2000);
   };
 

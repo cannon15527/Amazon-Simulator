@@ -30,6 +30,8 @@ export default function PayPalCheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
+  const returnContext = searchParams.get('return_context');
+
   useEffect(() => {
     const totalParam = searchParams.get('total');
     if (totalParam) {
@@ -63,7 +65,11 @@ export default function PayPalCheckoutPage() {
     setSelectedCardId(cardId);
     setTimeout(() => {
         // Redirect back to cart with a success flag
-        router.push('/cart?paypal_success=true');
+        let redirectUrl = '/cart?paypal_success=true';
+        if (returnContext) {
+            redirectUrl += `&return_context=${returnContext}`;
+        }
+        router.push(redirectUrl);
     }, 2000);
   };
 
