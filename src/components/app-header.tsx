@@ -1,7 +1,7 @@
 
 "use client";
 import Link from "next/link";
-import { ShoppingCart, Wallet, User, Star, Receipt, RefreshCw } from "lucide-react";
+import { ShoppingCart, Wallet, User, Star, RefreshCw } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { MiniCart } from "./mini-cart";
-import { SidebarTrigger } from "./ui/sidebar";
 
 
 function TopBar() {
@@ -93,8 +92,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <TopBar />
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-6">
-          <SidebarTrigger className="md:hidden" />
+        <div className="flex items-center gap-6">
           <Logo isPrime={isPrime} />
           <nav className="hidden items-center gap-6 md:flex">
             <Link
