@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentDialog } from "@/components/payment-dialog";
@@ -21,6 +21,7 @@ import { ProcessingOverlay } from "@/components/processing-overlay";
 import { SALES_TAX_RATE } from "@/lib/constants";
 import { useFinance } from "@/hooks/use-finance";
 import { products } from "@/lib/products";
+import { usePrime } from "@/hooks/use-prime";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
@@ -33,6 +34,7 @@ export default function CartPage() {
   const { addresses, getDefaultAddress } = useAddresses();
   const { toast } = useToast();
   const { addFinancePlan } = useFinance();
+  const { isPrime } = usePrime();
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>();
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,8 +43,13 @@ export default function CartPage() {
   const router = useRouter();
   const processingRef = useRef(false);
 
+  const shippingCost = useMemo(() => {
+    if (isPrime || cartTotal === 0) return 0;
+    return cartTotal * 0.15;
+  }, [isPrime, cartTotal]);
+
   const taxAmount = cartTotal * SALES_TAX_RATE;
-  const orderTotal = cartTotal + taxAmount;
+  const orderTotal = cartTotal + taxAmount + shippingCost;
   
   const processCartOrder = useCallback(() => {
     if (cart.length === 0) return;
@@ -249,7 +256,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>Free (via wormhole)</span>
+                  <span>{isPrime ? 'Free (Prime)' : formatCurrency(shippingCost)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">

@@ -24,6 +24,7 @@ import Link from "next/link";
 import { PaymentDialog } from "./payment-dialog";
 import { ProcessingOverlay } from "./processing-overlay";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { usePrime } from "@/hooks/use-prime";
 
 interface ProductDetailProps {
   product: Product;
@@ -78,9 +79,15 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
   const { addresses, getDefaultAddress } = useAddresses();
   const { balance, deduct } = useWallet();
   const { addOrder } = useOrders();
+  const { isPrime } = usePrime();
+
+  const shippingCost = useMemo(() => {
+    if (isPrime) return 0;
+    return product.price * 0.15;
+  }, [isPrime, product.price]);
 
   const taxAmount = product.price * SALES_TAX_RATE;
-  const orderTotal = product.price + taxAmount;
+  const orderTotal = product.price + taxAmount + shippingCost;
 
   const selectedReviews = useMemo(() => {
     return [...fakeReviews].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -192,7 +199,7 @@ export function ProductDetail({ product, originalPrice, onClose }: ProductDetail
                         </div>
                         <div className="flex justify-between">
                             <span>Shipping</span>
-                            <span>Free (via wormhole)</span>
+                            <span>{isPrime ? 'Free (Prime)' : formatCurrency(shippingCost)}</span>
                         </div>
                         <Separator />
                         <div className="flex justify-between font-bold text-lg">
