@@ -9,9 +9,34 @@ import { Badge } from "./ui/badge";
 import { usePrime } from "@/hooks/use-prime";
 import { useDate } from "@/hooks/use-date";
 import { format } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+
 
 function TopBar() {
   const { currentDate, resetDate } = useDate();
+  const { isPrime, cancelSubscriptionNow } = usePrime();
+  const { toast } = useToast();
+  
+  const handleResetWithPrime = () => {
+    resetDate();
+    cancelSubscriptionNow();
+    toast({
+      title: "Date Reset",
+      description: "Your Prime membership has been cancelled to prevent simulation conflicts.",
+    });
+  }
+
   // Don't render on the server or until hydrated, since date is client-side
   if (!currentDate) return null;
 
@@ -19,10 +44,33 @@ function TopBar() {
     <div className="bg-muted/50 text-muted-foreground text-xs text-center py-1.5">
       <div className="container flex items-center justify-center gap-2">
         <span>Today's simulated date is: {format(currentDate, "MMMM d, yyyy")}</span>
-        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={resetDate} aria-label="Reset date to today">
-            <RefreshCw className="h-3 w-3" />
-            <span className="sr-only">Reset date</span>
-        </Button>
+        {isPrime ? (
+          <AlertDialog>
+              <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5" aria-label="Reset date to today">
+                      <RefreshCw className="h-3 w-3" />
+                      <span className="sr-only">Reset date</span>
+                  </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                  <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                          Resetting the simulation date can cause conflicts with your active Prime membership. To prevent bugs, your Prime membership will be cancelled. Are you sure you want to continue?
+                      </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleResetWithPrime}>Yes, reset and cancel Prime</AlertDialogAction>
+                  </AlertDialogFooter>
+              </AlertDialogContent>
+          </AlertDialog>
+        ) : (
+            <Button variant="ghost" size="icon" className="h-5 w-5" onClick={resetDate} aria-label="Reset date to today">
+              <RefreshCw className="h-3 w-3" />
+              <span className="sr-only">Reset date</span>
+            </Button>
+        )}
       </div>
     </div>
   );

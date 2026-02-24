@@ -14,6 +14,7 @@ interface PrimeContextType {
   timeLeft: number | null; // Will now be days
   willCancel: boolean;
   renewalDate: Date | null;
+  cancelSubscriptionNow: () => void;
 }
 
 export const PrimeContext = createContext<PrimeContextType | undefined>(
@@ -135,7 +136,7 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft, willCancel, renewalDate }}>
+    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft, willCancel, renewalDate, cancelSubscriptionNow }}>
       {children}
     </PrimeContext.Provider>
   );
