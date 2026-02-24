@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MapPin, Star, Wallet, Trash2, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -35,6 +35,7 @@ const accountNav = [
 ];
 
 function DeleteAccountDialog() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState("");
   const { toast } = useToast();
@@ -49,7 +50,7 @@ function DeleteAccountDialog() {
         description: "Your account data has been reset. You will be redirected to sign up."
     });
     // Redirect to sign up page.
-    setTimeout(() => window.location.href = '/signup', 1000);
+    setTimeout(() => router.push('/signup'), 1000);
   };
   
   return (
