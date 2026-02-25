@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -35,6 +34,8 @@ export default function ProductsPage() {
   const [userName, setUserName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("alpha-asc");
+  const [pageInput, setPageInput] = useState(String(currentPage));
+
 
   useEffect(() => {
     const name = localStorage.getItem("simushop_user_name");
@@ -122,7 +123,29 @@ export default function ProductsPage() {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }
+  };
+
+  useEffect(() => {
+    setPageInput(String(currentPage));
+  }, [currentPage]);
+
+  const handlePageInputSubmit = () => {
+    let page = parseInt(pageInput, 10);
+    if (isNaN(page) || page < 1) {
+        page = 1;
+    } else if (page > totalPages) {
+        page = totalPages;
+    }
+    handlePageChange(page);
+  };
+
+  const handlePageInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+          handlePageInputSubmit();
+          e.currentTarget.blur();
+      }
+  };
+
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
@@ -247,9 +270,22 @@ export default function ProductsPage() {
                         <ChevronLeft className="mr-2"/>
                         Previous
                     </Button>
-                    <span className="text-sm font-medium">
-                        Page {currentPage} of {totalPages}
-                    </span>
+                    
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                        <span>Page</span>
+                        <Input
+                            type="number"
+                            value={pageInput}
+                            onChange={(e) => setPageInput(e.target.value)}
+                            onBlur={handlePageInputSubmit}
+                            onKeyDown={handlePageInputKeyDown}
+                            className="h-8 w-16 text-center"
+                            min="1"
+                            max={totalPages}
+                        />
+                        <span>of {totalPages}</span>
+                    </div>
+
                     <Button 
                         variant="outline"
                         onClick={() => handlePageChange(currentPage + 1)}
