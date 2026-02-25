@@ -149,7 +149,7 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
     setIsPaymentDialogOpen(true);
   };
 
-  const handleExternalPaymentRedirect = (paymentType: 'paypal' | 'finance') => {
+  const handleExternalPaymentRedirect = (paymentType: 'paypal' | 'finance' | 'google-pay') => {
      if (!selectedAddressId) return;
      const context = {
          productId: product.id,
@@ -157,7 +157,14 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
          total: orderTotal,
      }
      localStorage.setItem('quick_checkout_context', JSON.stringify(context));
-     const url = paymentType === 'paypal' ? `/paypal-checkout?total=${orderTotal}&return_context=quick-checkout` : `/finance-checkout?total=${orderTotal}&return_context=quick-checkout`;
+     let url = '';
+     if (paymentType === 'paypal') {
+        url = `/paypal-checkout?total=${orderTotal}&return_context=quick-checkout`;
+     } else if (paymentType === 'finance') {
+        url = `/finance-checkout?total=${orderTotal}&return_context=quick-checkout`;
+     } else if (paymentType === 'google-pay') {
+        url = `/google-pay-checkout?total=${orderTotal}&return_context=quick-checkout`;
+     }
      router.push(url);
   }
 
@@ -254,6 +261,7 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
                 total={orderTotal}
                 onPayPalClick={() => handleExternalPaymentRedirect('paypal')}
                 onFinanceClick={() => handleExternalPaymentRedirect('finance')}
+                onGooglePayClick={() => handleExternalPaymentRedirect('google-pay')}
             />
         </>
       )

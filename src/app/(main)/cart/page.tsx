@@ -77,9 +77,10 @@ export default function CartPage() {
  useEffect(() => {
     const paypalSuccess = searchParams.get('paypal_success') === 'true';
     const financeSuccess = searchParams.get('finance_success') === 'true';
+    const googlePaySuccess = searchParams.get('google_pay_success') === 'true';
     const returnContext = searchParams.get('return_context');
 
-    if ((paypalSuccess || financeSuccess) && !processingRef.current) {
+    if ((paypalSuccess || financeSuccess || googlePaySuccess) && !processingRef.current) {
       
       processingRef.current = true;
       setIsProcessing(true);
@@ -89,6 +90,7 @@ export default function CartPage() {
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete('paypal_success');
       newUrl.searchParams.delete('finance_success');
+      newUrl.searchParams.delete('google_pay_success');
       newUrl.searchParams.delete('return_context');
       newUrl.searchParams.delete('duration');
       newUrl.searchParams.delete('interest');
@@ -112,7 +114,7 @@ export default function CartPage() {
                              setProcessingStatus('success');
                              toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
                              orderProcessed = true;
-                         } else if (paypalSuccess) {
+                         } else if (paypalSuccess || googlePaySuccess) {
                               if (balance < total) {
                                 setProcessingStatus('declined');
                                 toast({ variant: "destructive", title: "Transaction Declined", description: `You have insufficient funds.` });
@@ -152,7 +154,7 @@ export default function CartPage() {
                     setProcessingStatus('success');
                     toast({ title: "Financing Approved!", description: "Check status in the Affirm tab." });
                 }
-            } else { // PayPal
+            } else { // PayPal or Google Pay
                 if (balance < orderTotal || cart.length === 0 || !shippingAddress) {
                     setProcessingStatus('declined');
                     toast({ variant: "destructive", title: "Transaction Declined", description: `Insufficient funds, empty cart, or missing address.` });
@@ -211,7 +213,7 @@ export default function CartPage() {
     }, 3000);
   };
   
-  const handleExternalRedirect = (paymentType: 'paypal' | 'finance') => {
+  const handleExternalRedirect = (paymentType: 'paypal' | 'finance' | 'google-pay') => {
     if (!selectedAddressId) return; // Should be disabled anyway
     
     // For regular cart, store the selected address ID
@@ -220,8 +222,10 @@ export default function CartPage() {
     let url = '';
     if (paymentType === 'paypal') {
         url = `/paypal-checkout?total=${orderTotal}`;
-    } else {
+    } else if (paymentType === 'finance') {
         url = `/finance-checkout?total=${orderTotal}`;
+    } else if (paymentType === 'google-pay') {
+        url = `/google-pay-checkout?total=${orderTotal}`;
     }
 
     router.push(url);
@@ -369,6 +373,7 @@ export default function CartPage() {
         total={orderTotal}
         onPayPalClick={() => handleExternalRedirect('paypal')}
         onFinanceClick={() => handleExternalRedirect('finance')}
+        onGooglePayClick={() => handleExternalRedirect('google-pay')}
     />
     </>
   );

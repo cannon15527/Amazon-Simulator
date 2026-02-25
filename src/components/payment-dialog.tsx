@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -24,6 +25,7 @@ import {
 import { CreditCard, Wallet, ExternalLink, Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 
 const cardFormSchema = z.object({
@@ -33,6 +35,39 @@ const cardFormSchema = z.object({
   nameOnCard: z.string().min(2, "Name is required."),
 });
 
+function GooglePayIcon(props: React.SVGProps<SVGSVGElement>) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            {...props}
+        >
+            <path
+            fill="#4285F4"
+            d="M22.5 8.63h-2.05a3.29 3.29 0 0 0-3.15-2.27V4.22a5.43 5.43 0 0 1 5.2 4.41z"
+            ></path>
+            <path
+            fill="#34A853"
+            d="M22.5 15.37h-2.05a3.29 3.29 0 0 1-3.15 2.27v2.14a5.43 5.43 0 0 0 5.2-4.41z"
+            ></path>
+            <path
+            fill="#FBBC04"
+            d="M4.05 6.37A3.29 3.29 0 0 1 7.2 4.1V1.95a5.43 5.43 0 0 0-5.2 4.42h2.05z"
+            ></path>
+            <path
+            fill="#EA4335"
+            d="M4.05 17.63a3.29 3.29 0 0 0 3.15 2.27v2.15a5.43 5.43 0 0 1-5.2-4.42h2.05z"
+            ></path>
+            <path
+            fill="#1A73E8"
+            d="M19.18 10.37H7.1a2.15 2.15 0 0 0-2.15 2.15v.51a2.15 2.15 0 0 0 2.15 2.15h12.08a2.15 2.15 0 0 0 2.15-2.15v-.51a2.15 2.15 0 0 0-2.15-2.15z"
+            ></path>
+        </svg>
+    );
+}
+
 interface PaymentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -40,9 +75,10 @@ interface PaymentDialogProps {
   total: number;
   onPayPalClick?: () => void;
   onFinanceClick?: () => void;
+  onGooglePayClick?: () => void;
 }
 
-export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, onPayPalClick, onFinanceClick }: PaymentDialogProps) {
+export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, onPayPalClick, onFinanceClick, onGooglePayClick }: PaymentDialogProps) {
   const router = useRouter();
   const showFinancing = total > 5000; // $50 in cents
 
@@ -80,6 +116,15 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
       router.push(`/finance-checkout?total=${total}`);
     }
   }
+  
+  function handleGooglePayRedirect() {
+    if (onGooglePayClick) {
+        onGooglePayClick();
+    } else {
+        router.push(`/google-pay-checkout?total=${total}`);
+    }
+  }
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -90,8 +135,15 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
             Total amount to pay: <span className="font-bold text-foreground">{formatCurrency(total)}</span>
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="card" className="w-full">
-          <TabsList className={cn("grid w-full", showFinancing ? "grid-cols-3" : "grid-cols-2")}>
+        <Tabs defaultValue="google-pay" className="w-full">
+          <TabsList className={cn("grid w-full", showFinancing ? "grid-cols-4" : "grid-cols-3")}>
+             <TabsTrigger value="google-pay">
+               <div className="flex items-center gap-2">
+                 <GooglePayIcon className="h-4 w-4" />
+                 <span>G Pay</span>
+               </div>
+               <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5">Recommended</Badge>
+            </TabsTrigger>
             <TabsTrigger value="card">
               <CreditCard className="mr-2 h-4 w-4" /> Card
             </TabsTrigger>
@@ -104,6 +156,15 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
                 </TabsTrigger>
             )}
           </TabsList>
+           <TabsContent value="google-pay">
+             <div className="space-y-4 pt-4 text-center">
+              <p className="text-sm text-muted-foreground">The fastest and most secure way to pay. You'll be redirected to complete your purchase.</p>
+              <Button type="button" className="w-full" size="lg" onClick={handleGooglePayRedirect}>
+                <ExternalLink className="mr-2" />
+                Continue with Google Pay
+              </Button>
+             </div>
+          </TabsContent>
           <TabsContent value="card">
             <Form {...cardForm}>
               <form onSubmit={cardForm.handleSubmit(onCardSubmit)} className="space-y-4 pt-4">
