@@ -25,9 +25,10 @@ interface ProductCardProps {
   product: Product;
   originalPrice?: number;
   isSponsored?: boolean;
+  variant?: 'default' | 'compact';
 }
 
-export function ProductCard({ product, originalPrice, isSponsored }: ProductCardProps) {
+export function ProductCard({ product, originalPrice, isSponsored, variant = 'default' }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,6 +48,21 @@ export function ProductCard({ product, originalPrice, isSponsored }: ProductCard
       minimumFractionDigits: 2,
     }).format(amount / 100);
   };
+  
+  if (variant === 'compact') {
+    return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <button className="text-sm text-left hover:underline text-muted-foreground hover:text-primary transition-colors">
+                {product.name}
+            </button>
+          </DialogTrigger>
+          <DialogContent className="p-0 max-w-md gap-0 overflow-hidden rounded-lg">
+            <ProductDetail product={product} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      );
+  }
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

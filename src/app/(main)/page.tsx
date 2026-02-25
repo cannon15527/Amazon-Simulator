@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -8,13 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, XCircle, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 import {
   Select,
   SelectContent,
@@ -150,16 +142,16 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
-        <section className="w-full py-8 md:py-12 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
+        <section className="w-full py-4 md:py-6 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
           <div className="container px-4 md:px-6 text-center">
             <div className="flex flex-col items-center space-y-4">
               <div className="inline-block rounded-lg bg-accent px-3 py-1 text-sm font-semibold text-accent-foreground shadow-sm border">
                 Prime Day Every Day (In 2029)
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tighter">
                 {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
               </h1>
-              <p className="max-w-[700px] text-muted-foreground md:text-xl">
+              <p className="max-w-[700px] text-muted-foreground text-lg">
                 Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
               </p>
               <div className="flex flex-col gap-3 min-[400px]:flex-row justify-center">
@@ -183,26 +175,16 @@ export default function ProductsPage() {
         </section>
 
         <section>
-            <h2 className="text-lg font-semibold tracking-tight mb-4">Sponsored Recommendations</h2>
-            <Carousel
-                opts={{
-                    align: "start",
-                    loop: true,
-                }}
-                className="w-full"
-            >
-                <CarouselContent>
-                    {featuredProducts.map((product) => (
-                        <CarouselItem key={product.id} className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6">
-                            <div className="p-1">
-                               <ProductCard product={product} isSponsored={true} />
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-            </Carousel>
+            <h2 className="text-base font-semibold tracking-tight mb-2">Sponsored Recommendations</h2>
+             <Card>
+                <CardContent className="p-3">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                        {featuredProducts.map((product) => (
+                           <ProductCard key={product.id} product={product} isSponsored={true} variant="compact" />
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
         </section>
 
         <section id="browse-all">
