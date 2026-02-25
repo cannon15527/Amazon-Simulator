@@ -41,7 +41,7 @@ function GooglePayIcon(props: React.SVGProps<SVGSVGElement>) {
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
-            viewBox="0 0 24 24"
+            viewBox="0 0 24"
             {...props}
         >
             <path
@@ -136,13 +136,13 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="google-pay" className="w-full">
-          <TabsList className={cn("grid w-full", showFinancing ? "grid-cols-4" : "grid-cols-3")}>
+          <TabsList className="w-full">
              <TabsTrigger value="google-pay">
                <div className="flex items-center gap-2">
                  <GooglePayIcon className="h-4 w-4" />
                  <span>G Pay</span>
+                 <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5">Recommended</Badge>
                </div>
-               <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5">Recommended</Badge>
             </TabsTrigger>
             <TabsTrigger value="card">
               <CreditCard className="mr-2 h-4 w-4" /> Card
