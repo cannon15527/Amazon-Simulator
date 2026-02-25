@@ -72,7 +72,7 @@ export function MiniCart() {
                     </div>
                 </ScrollArea>
 
-                <SheetFooter className="flex-col gap-4 pt-4 border-t">
+                <SheetFooter className="flex-col sm:flex-col gap-4 pt-4 border-t">
                     <div className="flex justify-between font-semibold">
                     <span>Subtotal</span>
                     <span>{formatCurrency(cartTotal)}</span>
