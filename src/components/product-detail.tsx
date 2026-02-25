@@ -149,7 +149,7 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
     setIsPaymentDialogOpen(true);
   };
 
-  const handleExternalPaymentRedirect = (paymentType: 'paypal' | 'finance' | 'google-pay') => {
+  const handleExternalPaymentRedirect = (paymentType: 'paypal' | 'finance' | 'google-pay' | 'apple-pay') => {
      if (!selectedAddressId) return;
      const context = {
          productId: product.id,
@@ -164,6 +164,8 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
         url = `/finance-checkout?total=${orderTotal}&return_context=quick-checkout`;
      } else if (paymentType === 'google-pay') {
         url = `/google-pay-checkout?total=${orderTotal}&return_context=quick-checkout`;
+     } else if (paymentType === 'apple-pay') {
+        url = `/apple-pay-checkout?total=${orderTotal}&return_context=quick-checkout`;
      }
      router.push(url);
   }
@@ -262,6 +264,7 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
                 onPayPalClick={() => handleExternalPaymentRedirect('paypal')}
                 onFinanceClick={() => handleExternalPaymentRedirect('finance')}
                 onGooglePayClick={() => handleExternalPaymentRedirect('google-pay')}
+                onApplePayClick={() => handleExternalPaymentRedirect('apple-pay')}
             />
         </>
       )

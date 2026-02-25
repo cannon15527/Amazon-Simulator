@@ -68,6 +68,23 @@ function GooglePayIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
+function ApplePayIcon(props: React.SVGProps<SVGSVGElement>) {
+    return (
+        <svg
+            width="24"
+            height="24"
+            viewBox="0 0 128 128"
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
+        >
+            <path
+                d="M107.49 86.43a29.44 29.44 0 0 1-13.8-2.65c-4.41-1.8-8.29-4.22-11.4-6.19-3.23-2.09-5.9-4-8.7-4s-5.47 1.91-8.7 4c-3.11 1.97-7 4.39-11.4 6.19a29.44 29.44 0 0 1-13.8 2.65C23.63 87.26 8.51 73.47 8.51 52.79c0-11.33 4.67-21.24 12.38-27.93a29.4 29.4 0 0 1 23.95-10.15c7.65 0 12.4 3.23 16.27 3.23s8.62-3.23 16.27-3.23a29.4 29.4 0 0 1 23.95 10.15c7.71 6.69 12.38 16.6 12.38 27.93 0 20.68-15.12 34.47-31.17 33.64zm-37.4-70.5c3.84-4.8 3.51-12.06-1-15.93-5-4.21-12.39-3.49-17.19 1.3-4.42 4.41-4.75 11.29-.87 16.1 4.54 4.54 11.66 4.1 16.32-1.3A2.43 2.43 0 0 1 70.09 15.93z"
+                fill='currentColor'
+            ></path>
+        </svg>
+    )
+}
+
 interface PaymentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -76,9 +93,10 @@ interface PaymentDialogProps {
   onPayPalClick?: () => void;
   onFinanceClick?: () => void;
   onGooglePayClick?: () => void;
+  onApplePayClick?: () => void;
 }
 
-export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, onPayPalClick, onFinanceClick, onGooglePayClick }: PaymentDialogProps) {
+export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, onPayPalClick, onFinanceClick, onGooglePayClick, onApplePayClick }: PaymentDialogProps) {
   const router = useRouter();
   const showFinancing = total > 5000; // $50 in cents
 
@@ -125,6 +143,14 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
     }
   }
 
+  function handleApplePayRedirect() {
+    if (onApplePayClick) {
+        onApplePayClick();
+    } else {
+        router.push(`/apple-pay-checkout?total=${total}`);
+    }
+  }
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -136,12 +162,18 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="google-pay" className="w-full">
-          <TabsList className="w-full h-auto flex-wrap">
+          <TabsList className="w-full h-auto flex-wrap justify-start">
              <TabsTrigger value="google-pay">
                <div className="flex items-center gap-2">
                  <GooglePayIcon className="h-4 w-4" />
                  <span>G Pay</span>
                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5">Recommended</Badge>
+               </div>
+            </TabsTrigger>
+            <TabsTrigger value="apple-pay">
+               <div className="flex items-center gap-2">
+                 <ApplePayIcon className="h-5 w-5" />
+                 <span>Apple Pay</span>
                </div>
             </TabsTrigger>
             <TabsTrigger value="card">
@@ -162,6 +194,15 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
               <Button type="button" className="w-full" size="lg" onClick={handleGooglePayRedirect}>
                 <ExternalLink className="mr-2" />
                 Continue with Google Pay
+              </Button>
+             </div>
+          </TabsContent>
+          <TabsContent value="apple-pay">
+             <div className="space-y-4 pt-4 text-center">
+              <p className="text-sm text-muted-foreground">Pay with Apple Pay for a fast and secure checkout. You'll be redirected to complete your purchase.</p>
+              <Button type="button" className="w-full bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200" size="lg" onClick={handleApplePayRedirect}>
+                <ExternalLink className="mr-2" />
+                Continue with Apple Pay
               </Button>
              </div>
           </TabsContent>
