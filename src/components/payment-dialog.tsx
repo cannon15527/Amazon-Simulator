@@ -136,7 +136,7 @@ export function PaymentDialog({ isOpen, onOpenChange, onPaymentSuccess, total, o
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="google-pay" className="w-full">
-          <TabsList className="w-full">
+          <TabsList className="w-full h-auto flex-wrap">
              <TabsTrigger value="google-pay">
                <div className="flex items-center gap-2">
                  <GooglePayIcon className="h-4 w-4" />
