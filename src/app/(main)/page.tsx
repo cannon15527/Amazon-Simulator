@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -149,7 +150,7 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
-        <section className="w-full py-12 md:py-16 lg:py-20 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
+        <section className="w-full py-8 md:py-12 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
           <div className="container px-4 md:px-6 text-center">
             <div className="flex flex-col items-center space-y-4">
               <div className="inline-block rounded-lg bg-accent px-3 py-1 text-sm font-semibold text-accent-foreground shadow-sm border">
@@ -182,7 +183,7 @@ export default function ProductsPage() {
         </section>
 
         <section>
-            <h2 className="text-xl font-semibold tracking-tight mb-6">Sponsored Recommendations</h2>
+            <h2 className="text-lg font-semibold tracking-tight mb-4">Sponsored Recommendations</h2>
             <Carousel
                 opts={{
                     align: "start",
@@ -192,7 +193,7 @@ export default function ProductsPage() {
             >
                 <CarouselContent>
                     {featuredProducts.map((product) => (
-                        <CarouselItem key={product.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4">
+                        <CarouselItem key={product.id} className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6">
                             <div className="p-1">
                                <ProductCard product={product} isSponsored={true} />
                             </div>
