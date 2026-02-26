@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { MiniCart } from "./mini-cart";
+import { ThemeToggle } from "./theme-toggle";
 
 
 function TopBar() {
@@ -123,12 +124,13 @@ export function AppHeader() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm font-medium">
                 <Wallet className="h-4 w-4 text-muted-foreground" />
                 <span>{formatCurrency(balance)}</span>
             </div>
             <MiniCart />
+            <ThemeToggle />
             <Button asChild variant="ghost" size="icon">
                 <Link href="/account">
                     <User className="h-5 w-5" />
