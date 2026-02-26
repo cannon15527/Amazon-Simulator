@@ -99,6 +99,11 @@ export function AppHeader() {
       currency: "USD",
     }).format(amount / 100);
   };
+  
+  const handleBackToCurrent = () => {
+    localStorage.setItem("simushop_legacy_mode", "false");
+    window.location.reload();
+  };
 
   if (isLegacyMode) {
     return (
@@ -106,9 +111,9 @@ export function AppHeader() {
         <TopBar />
         <div className="container flex h-16 items-center justify-between">
           <Logo isPrime={isPrime} />
-          <Button onClick={() => router.back()} variant="outline">
+          <Button onClick={handleBackToCurrent} variant="outline">
             <ArrowLeft className="mr-2" />
-            Back
+            Back to current version
           </Button>
         </div>
       </header>
