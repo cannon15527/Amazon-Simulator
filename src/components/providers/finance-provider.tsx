@@ -1,5 +1,4 @@
 "use client";
-
 import type { FinancePlan } from "@/lib/types";
 import {
   createContext,
@@ -39,8 +38,9 @@ const FinancePlanSchema = z.object({
   duration: z.number(),
   interestRate: z.number(),
   nextPaymentDate: z.number(),
-  status: z.enum(['Active', 'Paid Off']),
+  status: z.enum(["Active", "Paid Off"]),
 });
+
 const FinancePlanArraySchema = z.array(FinancePlanSchema);
 
 const LOCAL_STORAGE_KEY = "simushop_finance_plans";
@@ -48,7 +48,6 @@ const LOCAL_STORAGE_KEY = "simushop_finance_plans";
 export function FinanceProvider({ children }: { children: ReactNode }) {
   const [plans, setPlans] = useState<FinancePlan[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
-
   const { deduct } = useWallet();
   const dateContext = useContext(DateContext);
   const currentDate = dateContext?.currentDate;
@@ -58,13 +57,18 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     try {
       const storedPlans = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedPlans) {
-        const parsed = FinancePlanArraySchema.safeParse(JSON.parse(storedPlans));
-        if(parsed.success) {
-            setPlans(parsed.data);
+        const parsed = FinancePlanArraySchema.safeParse(
+          JSON.parse(storedPlans)
+        );
+        if (parsed.success) {
+          setPlans(parsed.data as FinancePlan[]);
         }
       }
     } catch (error) {
-      console.error("Failed to parse finance plans from localStorage", error);
+      console.error(
+        "Failed to parse finance plans from localStorage",
+        error
+      );
     }
     setIsHydrated(true);
   }, []);
@@ -98,6 +102,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       nextPaymentDate: addMonths(currentDate, 1).getTime(),
       status: "Active",
     };
+
     setPlans((prev) => [...prev, newPlan]);
   };
 
@@ -106,7 +111,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     setPlans((prevPlans) => {
       let hasChanged = false;
-      const updatedPlans = prevPlans.map((plan) => {
+
+      const updatedPlans: FinancePlan[] = prevPlans.map((plan) => {
         if (
           plan.status === "Paid Off" ||
           currentDate.getTime() < plan.nextPaymentDate
@@ -116,25 +122,31 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
         const remainingBalance = plan.totalAmount - plan.amountPaid;
         const paymentAmount = Math.min(plan.monthlyPayment, remainingBalance);
-        
+
         if (paymentAmount <= 0) {
-            if (plan.status === 'Active') {
-                hasChanged = true;
-                return { ...plan, status: 'Paid Off', amountPaid: plan.totalAmount };
-            }
-            return plan;
+          if (plan.status === "Active") {
+            hasChanged = true;
+            return {
+              ...plan,
+              status: "Paid Off",
+              amountPaid: plan.totalAmount,
+            };
+          }
+          return plan;
         }
 
         if (deduct(paymentAmount)) {
           hasChanged = true;
           const newAmountPaid = plan.amountPaid + paymentAmount;
           const newPaymentsMade = plan.paymentsMade + 1;
-
           const isPaidOff = newAmountPaid >= plan.totalAmount;
-          
+
           toast({
             title: "Affirm Payment Made",
-            description: `Your payment of ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(paymentAmount / 100)} was successful.`,
+            description: `Your payment of ${new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(paymentAmount / 100)} was successful.`,
           });
 
           return {
@@ -145,27 +157,28 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
               new Date(plan.nextPaymentDate),
               1
             ).getTime(),
-            status: isPaidOff ? "Paid Off" : "Active",
+            status: isPaidOff ? "Paid Off" as const : "Active" as const,
           };
         } else {
           toast({
             variant: "destructive",
             title: "Affirm Payment Failed",
-            description: "Insufficient funds for your scheduled payment.",
+            description:
+              "Insufficient funds for your scheduled payment.",
           });
           return plan;
         }
       });
-        return hasChanged ? updatedPlans : prevPlans;
+
+      return hasChanged ? updatedPlans : prevPlans;
     });
   }, [currentDate, deduct, toast]);
-  
-  useEffect(() => {
-      if(isHydrated) {
-          processPayments();
-      }
-  }, [isHydrated, processPayments]);
 
+  useEffect(() => {
+    if (isHydrated) {
+      processPayments();
+    }
+  }, [isHydrated, processPayments]);
 
   if (!isHydrated) return null;
 
@@ -175,3 +188,4 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     </FinanceContext.Provider>
   );
 }
+
