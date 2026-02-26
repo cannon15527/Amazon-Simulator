@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { INITIAL_WALLET_BALANCE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 
 const PRODUCTS_PER_PAGE = 12;
@@ -38,6 +39,7 @@ export default function ProductsPage() {
   const [pageInput, setPageInput] = useState(String(currentPage));
   const [isDevMenuOpen, setIsDevMenuOpen] = useState(false);
   const [customBalance, setCustomBalance] = useState("");
+  const [isLegacyMode, setIsLegacyMode] = useState(false);
 
 
   const { addFunds, setBalance } = useWallet();
@@ -51,6 +53,8 @@ export default function ProductsPage() {
     if (name) {
       setUserName(name);
     }
+    const legacyMode = localStorage.getItem("simushop_legacy_mode") === "true";
+    setIsLegacyMode(legacyMode);
   }, []);
 
   const categories = [
@@ -194,6 +198,13 @@ export default function ProductsPage() {
       grantDevPrime(devRenewalDate);
       toast({ title: "Dev Action", description: "Prime membership granted until 12/31/2099." });
     }
+  };
+
+  const handleToggleLegacyMode = (checked: boolean) => {
+    localStorage.setItem("simushop_legacy_mode", String(checked));
+    setIsLegacyMode(checked);
+    toast({ title: "Dev Action", description: `Legacy Mode ${checked ? 'Enabled' : 'Disabled'}. Page will reload.` });
+    setTimeout(() => window.location.reload(), 1500);
   };
 
   const handleDevReset = () => {
@@ -384,6 +395,25 @@ export default function ProductsPage() {
                     <div className="space-y-3">
                         <h4 className="font-medium flex items-center gap-2"><Star /> Prime Controls</h4>
                         <Button variant="outline" onClick={handleDevTogglePrime}>{isPrime ? "Cancel Prime Membership" : "Grant Prime Membership"}</Button>
+                    </div>
+                    <Separator />
+                     <div className="space-y-3">
+                        <h4 className="font-medium flex items-center gap-2"><Settings /> Legacy Controls</h4>
+                        <div className="flex items-center justify-between rounded-lg border p-4">
+                           <div>
+                             <label htmlFor="legacy-mode" className="text-sm font-medium">
+                                Enable Legacy Mode
+                            </label>
+                            <p className="text-xs text-muted-foreground">
+                                Reverts to the V1 prototype UI.
+                            </p>
+                           </div>
+                            <Switch
+                                id="legacy-mode"
+                                checked={isLegacyMode}
+                                onCheckedChange={handleToggleLegacyMode}
+                            />
+                        </div>
                     </div>
                     <Separator />
                     <div className="space-y-3 rounded-lg border border-destructive/50 bg-destructive/5 p-4">

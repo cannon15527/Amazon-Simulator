@@ -1,7 +1,7 @@
 
 "use client";
 import Link from "next/link";
-import { ShoppingCart, Wallet, User, Star, RefreshCw } from "lucide-react";
+import { ShoppingCart, Wallet, User, Star, RefreshCw, ArrowLeft } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
@@ -22,6 +22,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { MiniCart } from "./mini-cart";
 import { ThemeToggle } from "./theme-toggle";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 
 function TopBar() {
@@ -81,6 +83,15 @@ function TopBar() {
 export function AppHeader() {
   const { balance } = useWallet();
   const { isPrime } = usePrime();
+  const router = useRouter();
+  const [isLegacyMode, setIsLegacyMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const legacyMode = localStorage.getItem("simushop_legacy_mode") === "true";
+      setIsLegacyMode(legacyMode);
+    }
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -88,6 +99,21 @@ export function AppHeader() {
       currency: "USD",
     }).format(amount / 100);
   };
+
+  if (isLegacyMode) {
+    return (
+      <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
+        <TopBar />
+        <div className="container flex h-16 items-center justify-between">
+          <Logo isPrime={isPrime} />
+          <Button onClick={() => router.back()} variant="outline">
+            <ArrowLeft className="mr-2" />
+            Back
+          </Button>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
