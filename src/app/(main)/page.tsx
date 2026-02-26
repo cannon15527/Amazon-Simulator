@@ -37,6 +37,8 @@ export default function ProductsPage() {
   const [sortOption, setSortOption] = useState("alpha-asc");
   const [pageInput, setPageInput] = useState(String(currentPage));
   const [isDevMenuOpen, setIsDevMenuOpen] = useState(false);
+  const [customBalance, setCustomBalance] = useState("");
+
 
   const { addFunds, setBalance } = useWallet();
   const { isPrime, subscribe, cancelSubscriptionNow } = usePrime();
@@ -169,6 +171,19 @@ export default function ProductsPage() {
     addFunds(amount);
     toast({ title: "Dev Action", description: `${formatCurrency(amount)} added to wallet.` });
   };
+  
+  const handleDevSetBalance = () => {
+    const amount = parseFloat(customBalance);
+    if (!isNaN(amount) && amount >= 0) {
+      const amountInCents = Math.round(amount * 100);
+      setBalance(amountInCents);
+      toast({ title: "Dev Action", description: `Wallet balance set to ${formatCurrency(amountInCents)}.` });
+      setCustomBalance("");
+    } else {
+      toast({ variant: "destructive", title: "Dev Action Failed", description: "Please enter a valid, non-negative amount." });
+    }
+  };
+
 
   const handleDevTogglePrime = () => {
     if (isPrime) {
@@ -356,6 +371,16 @@ export default function ProductsPage() {
                             <Button variant="outline" onClick={() => handleDevAddFunds(100000)}>$1,000</Button>
                             <Button variant="outline" onClick={() => handleDevAddFunds(1000000)}>$10,000</Button>
                         </div>
+                        <div className="flex items-center gap-2 pt-2">
+                            <Input
+                                type="number"
+                                placeholder="Set exact balance ($)"
+                                value={customBalance}
+                                onChange={(e) => setCustomBalance(e.target.value)}
+                                className="h-9"
+                            />
+                            <Button onClick={handleDevSetBalance} className="h-9">Set Balance</Button>
+                        </div>
                     </div>
                     <Separator />
                     <div className="space-y-3">
@@ -376,3 +401,4 @@ export default function ProductsPage() {
 }
 
     
+
