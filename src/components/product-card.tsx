@@ -26,9 +26,10 @@ interface ProductCardProps {
   originalPrice?: number;
   isSponsored?: boolean;
   variant?: 'default' | 'compact';
+  isLegacyMode?: boolean;
 }
 
-export function ProductCard({ product, originalPrice, isSponsored, variant = 'default' }: ProductCardProps) {
+export function ProductCard({ product, originalPrice, isSponsored, variant = 'default', isLegacyMode = false }: ProductCardProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -58,7 +59,7 @@ export function ProductCard({ product, originalPrice, isSponsored, variant = 'de
             </button>
           </DialogTrigger>
           <DialogContent className="p-0 max-w-md gap-0 overflow-hidden rounded-lg">
-            <ProductDetail product={product} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} />
+            <ProductDetail product={product} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} isLegacyMode={isLegacyMode} />
           </DialogContent>
         </Dialog>
       );
@@ -91,7 +92,7 @@ export function ProductCard({ product, originalPrice, isSponsored, variant = 'de
               </div>
               <div className="p-4 pb-2">
                 <CardTitle className="font-headline text-base h-12">{product.name}</CardTitle>
-                 {product.legalDisclaimer && (
+                 {!isLegacyMode && product.legalDisclaimer && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -130,7 +131,7 @@ export function ProductCard({ product, originalPrice, isSponsored, variant = 'de
         </CardFooter>
       </Card>
       <DialogContent className="p-0 max-w-md gap-0 overflow-hidden rounded-lg">
-        <ProductDetail product={product} originalPrice={originalPrice} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} />
+        <ProductDetail product={product} originalPrice={originalPrice} isSponsored={isSponsored} onClose={() => setIsDialogOpen(false)} isLegacyMode={isLegacyMode} />
       </DialogContent>
     </Dialog>
   );

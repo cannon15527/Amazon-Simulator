@@ -218,98 +218,113 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
-        <section className="w-full py-4 md:py-6 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
-          <div className="container px-4 md:px-6 text-center">
-            <div className="flex flex-col items-center space-y-4">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tighter">
-                {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
-              </h1>
-              <p className="max-w-[700px] text-muted-foreground text-lg">
-                Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
-              </p>
-              <div className="flex flex-col gap-3 min-[400px]:flex-row justify-center">
-                 <form onSubmit={handleSearch} className="flex w-full max-w-sm items-center space-x-2">
-                    <Input 
-                      type="text" 
-                      placeholder="Search for anti-gravity boots..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <Button type="submit">Search</Button>
-                </form>
+        { !isLegacyMode && (
+          <>
+            <section className="w-full py-4 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
+              <div className="container px-4 md:px-6 text-center">
+                <div className="flex flex-col items-center space-y-4">
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tighter">
+                    {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
+                  </h1>
+                  <p className="max-w-[700px] text-muted-foreground text-lg">
+                    Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
+                  </p>
+                  <div className="flex flex-col gap-3 min-[400px]:flex-row justify-center">
+                    <form onSubmit={handleSearch} className="flex w-full max-w-sm items-center space-x-2">
+                        <Input 
+                          type="text" 
+                          placeholder="Search for anti-gravity boots..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <Button type="submit">Search</Button>
+                    </form>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
+            </section>
 
-        <section>
-            <h2 className="text-base font-semibold tracking-tight mb-2">Sponsored Recommendations</h2>
-             <Card>
-                <CardContent className="p-3">
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                        {featuredProducts.map((product) => (
-                           <ProductCard key={product.id} product={product} isSponsored={true} variant="compact" />
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
-        </section>
+            <section>
+                <h2 className="text-base font-semibold tracking-tight mb-2">Sponsored Recommendations</h2>
+                 <Card>
+                    <CardContent className="p-3">
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                            {featuredProducts.map((product) => (
+                               <ProductCard key={product.id} product={product} isSponsored={true} variant="compact" isLegacyMode={isLegacyMode} />
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
+          </>
+        )}
 
         <section id="browse-all">
              <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
                 <h2 className="text-2xl font-bold tracking-tight">Browse All Products</h2>
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                    <Select value={sortOption} onValueChange={setSortOption}>
-                        <SelectTrigger className="w-full md:w-[220px]">
-                            <SelectValue placeholder="Sort by..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="alpha-asc">Alphabetical: A-Z</SelectItem>
-                            <SelectItem value="alpha-desc">Alphabetical: Z-A</SelectItem>
-                            <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                            <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                        </SelectContent>
-                    </Select>
+                {!isLegacyMode && (
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                        <Select value={sortOption} onValueChange={setSortOption}>
+                            <SelectTrigger className="w-full md:w-[220px]">
+                                <SelectValue placeholder="Sort by..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="alpha-asc">Alphabetical: A-Z</SelectItem>
+                                <SelectItem value="alpha-desc">Alphabetical: Z-A</SelectItem>
+                                <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                                <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )}
+            </div>
+
+            {!isLegacyMode && (
+              <>
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                    {categories.map((category) => (
+                    <Button
+                        key={category}
+                        variant={selectedCategory === category && !activeSearch ? "default" : "secondary"}
+                        size="sm"
+                        onClick={() => handleCategoryClick(category)}
+                        className="rounded-full px-4"
+                    >
+                        {category}
+                    </Button>
+                    ))}
                 </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-                {categories.map((category) => (
-                <Button
-                    key={category}
-                    variant={selectedCategory === category && !activeSearch ? "default" : "secondary"}
-                    size="sm"
-                    onClick={() => handleCategoryClick(category)}
-                    className="rounded-full px-4"
-                >
-                    {category}
-                </Button>
-                ))}
-            </div>
-
-            <div className="mb-8">
-              {activeSearch ? (
-                  <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                          Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
+                <div className="mb-8">
+                  {activeSearch ? (
+                      <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
+                          <p className="text-sm text-muted-foreground">
+                              Showing {filteredProducts.length} results for <span className="font-bold text-foreground">"{activeSearch}"</span>
+                          </p>
+                          <Button variant="ghost" size="sm" onClick={clearSearch}>
+                              <XCircle className="mr-2"/>
+                              Clear Search
+                          </Button>
+                      </div>
+                  ) : (
+                      <p className="text-sm text-muted-foreground py-3">
+                        Showing {paginatedProducts.length} of {filteredProducts.length} products
                       </p>
-                      <Button variant="ghost" size="sm" onClick={clearSearch}>
-                          <XCircle className="mr-2"/>
-                          Clear Search
-                      </Button>
-                  </div>
-              ) : (
-                  <p className="text-sm text-muted-foreground py-3">
-                    Showing {paginatedProducts.length} of {filteredProducts.length} products
-                  </p>
-              )}
-            </div>
+                  )}
+                </div>
+              </>
+            )}
 
-            {paginatedProducts.length > 0 ? (
+            {isLegacyMode ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {products.map((product) => (
+                        <ProductCard key={product.id} product={product} isLegacyMode={isLegacyMode} />
+                    ))}
+                </div>
+            ) : paginatedProducts.length > 0 ? (
                 <>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {paginatedProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product.id} product={product} isLegacyMode={isLegacyMode} />
                     ))}
                 </div>
                 <div className="flex items-center justify-center pt-12 gap-4">
@@ -427,7 +442,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
-    
-
-    

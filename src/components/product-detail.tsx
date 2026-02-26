@@ -34,6 +34,7 @@ interface ProductDetailProps {
   originalPrice?: number;
   isSponsored?: boolean;
   onClose: () => void;
+  isLegacyMode?: boolean;
 }
 
 const formatCurrency = (amount: number) => {
@@ -69,7 +70,7 @@ const fakeReviews = [
 ];
 
 
-export function ProductDetail({ product, originalPrice, isSponsored, onClose }: ProductDetailProps) {
+export function ProductDetail({ product, originalPrice, isSponsored, onClose, isLegacyMode = false }: ProductDetailProps) {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const router = useRouter();
@@ -284,7 +285,7 @@ export function ProductDetail({ product, originalPrice, isSponsored, onClose }: 
       <div className="flex-1 overflow-y-auto">
         <DialogHeader className="p-6 text-left">
           <DialogTitle className="font-headline text-2xl">{product.name}</DialogTitle>
-            {product.legalDisclaimer && (
+            {!isLegacyMode && product.legalDisclaimer && (
                 <Badge variant="outline" className="mt-1 border-amber-500 text-amber-600 w-fit">
                     {product.legalDisclaimer}
                 </Badge>
