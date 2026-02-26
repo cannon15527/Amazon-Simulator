@@ -94,7 +94,7 @@ export default function GooglePayCheckoutPage() {
             <div className="p-4 rounded-lg border bg-background">
                 <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Paying</span>
-                    <span>Amazon Simulator</span>
+                    <span>Amazon</span>
                 </div>
                 <div className="flex justify-between items-center text-lg font-bold mt-1">
                     <span>Total</span>
@@ -119,7 +119,7 @@ export default function GooglePayCheckoutPage() {
         </CardFooter>
         <p className="text-xs text-muted-foreground text-center p-4 pt-0">
           <ShieldCheck className="inline h-3 w-3 mr-1" />
-          Secured by Google. This is a simulation.
+          Secured by Google.
         </p>
       </Card>
     </div>

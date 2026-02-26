@@ -73,7 +73,7 @@ export default function ApplePayCheckoutPage() {
                 <ApplePayIcon />
             </div>
           <CardTitle className="text-xl">Pay with Apple Pay</CardTitle>
-          <CardDescription className="text-zinc-600 dark:text-zinc-400">Amazon Simulator</CardDescription>
+          <CardDescription className="text-zinc-600 dark:text-zinc-400">Amazon</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="flex justify-between items-center text-lg font-semibold mt-1">
@@ -96,7 +96,7 @@ export default function ApplePayCheckoutPage() {
                 )}
             </Button>
              <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center">
-                This is a secure, simulated payment.
+                This is a secure payment.
             </p>
         </CardFooter>
       </Card>
