@@ -1,20 +1,26 @@
 "use client";
 
-import type { Order, CartItem, Address } from "@/lib/types";
 import {
   createContext,
   useState,
   useEffect,
   type ReactNode,
+  useContext,
   useCallback,
 } from "react";
 import { z } from "zod";
-import { SHIPPING_TIME_NORMAL_SECONDS, SHIPPING_TIME_PRIME_SECONDS, SHIPPING_TIME_PROCESSING_SECONDS } from "@/lib/constants";
-import { usePrime } from "@/hooks/use-prime";
+import type { Order, CartItem } from "@/lib/types";
+import { DateContext } from "@/components/providers/date-provider";
+import { addDays, addHours } from "date-fns";
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (items: CartItem[], total: number, address: Address) => Order;
+  placeOrder: (
+    items: CartItem[],
+    total: number,
+    shippingAddress: string
+  ) => Order;
+  updateOrderStatus: (orderId: string, status: Order["status"]) => void;
 }
 
 export const OrderContext = createContext<OrderContextType | undefined>(
@@ -22,31 +28,32 @@ export const OrderContext = createContext<OrderContextType | undefined>(
 );
 
 const OrderSchema = z.object({
-    id: z.string(),
-    items: z.array(z.any()), // Simplified for parsing
-    total: z.number(),
-    shippingAddress: z.any(), // Simplified for parsing
-    status: z.enum(["Processing", "Shipped", "Delivered"]),
-    orderDate: z.number(),
-    estimatedDelivery: z.number(),
+  id: z.string(),
+  items: z.array(z.any()),
+  total: z.number(),
+  orderDate: z.number(),
+  estimatedDelivery: z.number(),
+  status: z.enum(["Processing", "Shipped", "Delivered"]),
+  shippingAddress: z.string(), // REQUIRED to match Order type
 });
-const OrderArraySchema = z.array(OrderSchema);
 
+const OrderArraySchema = z.array(OrderSchema);
 
 const LOCAL_STORAGE_KEY = "simushop_orders";
 
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
-  const { isPrime } = usePrime();
+  const dateContext = useContext(DateContext);
+  const currentDate = dateContext?.currentDate;
 
   useEffect(() => {
     try {
       const storedOrders = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedOrders) {
-         const parsed = OrderArraySchema.safeParse(JSON.parse(storedOrders));
+        const parsed = OrderArraySchema.safeParse(JSON.parse(storedOrders));
         if (parsed.success) {
-            setOrders(parsed.data);
+          setOrders(parsed.data as Order[]);
         }
       }
     } catch (error) {
@@ -56,71 +63,74 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if(isHydrated) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orders));
+    if (isHydrated) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orders));
     }
   }, [orders, isHydrated]);
 
-  const addOrder = (items: CartItem[], total: number, address: Address) => {
-    const now = Date.now();
-    const shippingTime = isPrime ? SHIPPING_TIME_PRIME_SECONDS : SHIPPING_TIME_NORMAL_SECONDS;
+  const placeOrder = (
+    items: CartItem[],
+    total: number,
+    shippingAddress: string
+  ): Order => {
+    const now = currentDate ?? new Date();
+    const estimatedDelivery = addDays(now, 2);
+
     const newOrder: Order = {
       id: crypto.randomUUID(),
       items,
       total,
-      shippingAddress: address,
+      orderDate: now.getTime(),
+      estimatedDelivery: estimatedDelivery.getTime(),
       status: "Processing",
-      orderDate: now,
-      estimatedDelivery: now + (shippingTime * 1000),
+      shippingAddress,
     };
-    setOrders((prev) => [newOrder, ...prev]);
+
+    setOrders((prev) => [...prev, newOrder]);
     return newOrder;
   };
 
-  const updateOrderStatus = useCallback(() => {
-    const now = Date.now();
-    setOrders(prevOrders => {
-        let hasChanged = false;
-        const updatedOrders = prevOrders.map(order => {
-            if (order.status === 'Delivered') return order;
-
-            const timeSinceOrder = (now - order.orderDate) / 1000;
-            const shippingDuration = (order.estimatedDelivery - order.orderDate) / 1000;
-            const processingTime = SHIPPING_TIME_PROCESSING_SECONDS;
-            
-            let newStatus = order.status;
-            if (timeSinceOrder >= shippingDuration) {
-                newStatus = 'Delivered';
-            } else if (timeSinceOrder >= processingTime) {
-                newStatus = 'Shipped';
-            }
-
-            if (newStatus !== order.status) {
-                hasChanged = true;
-                return { ...order, status: newStatus };
-            }
-            return order;
-        });
-
-        if (hasChanged) {
-            return updatedOrders;
-        }
-        return prevOrders;
-    });
-  }, []);
+  const updateOrderStatus = useCallback(
+    (orderId: string, status: Order["status"]) => {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, status } : order
+        )
+      );
+    },
+    []
+  );
 
   useEffect(() => {
-    if (!isHydrated) return;
-    const interval = setInterval(updateOrderStatus, 1000);
-    return () => clearInterval(interval);
-  }, [isHydrated, updateOrderStatus]);
+    if (!currentDate) return;
 
-  if (!isHydrated) {
-    return null;
-  }
+    setOrders((prevOrders) =>
+      prevOrders.map((order) => {
+        if (
+          order.status === "Processing" &&
+          currentDate.getTime() >= addHours(order.orderDate, 1).getTime()
+        ) {
+          return { ...order, status: "Shipped" };
+        }
+
+        if (
+          order.status === "Shipped" &&
+          currentDate.getTime() >= order.estimatedDelivery
+        ) {
+          return { ...order, status: "Delivered" };
+        }
+
+        return order;
+      })
+    );
+  }, [currentDate]);
+
+  if (!isHydrated) return null;
 
   return (
-    <OrderContext.Provider value={{ orders, addOrder }}>
+    <OrderContext.Provider
+      value={{ orders, placeOrder, updateOrderStatus }}
+    >
       {children}
     </OrderContext.Provider>
   );
