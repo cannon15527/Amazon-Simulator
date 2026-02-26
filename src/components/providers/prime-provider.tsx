@@ -1,3 +1,4 @@
+
 "use client";
 
 import { createContext, useState, useEffect, type ReactNode, useCallback, useContext } from "react";
@@ -15,6 +16,7 @@ interface PrimeContextType {
   willCancel: boolean;
   renewalDate: Date | null;
   cancelSubscriptionNow: () => void;
+  grantDevPrime: (renewalDate: Date) => void;
 }
 
 export const PrimeContext = createContext<PrimeContextType | undefined>(
@@ -81,6 +83,12 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
     return false;
   };
 
+  const grantDevPrime = (newRenewalDate: Date) => {
+    setIsPrime(true);
+    setWillCancel(false);
+    setRenewalDate(newRenewalDate);
+  };
+
   const cancelSubscriptionNow = useCallback(() => {
     setIsPrime(false);
     setRenewalDate(null);
@@ -136,8 +144,10 @@ export function PrimeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft, willCancel, renewalDate, cancelSubscriptionNow }}>
+    <PrimeContext.Provider value={{ isPrime, subscribe, unsubscribe, timeLeft, willCancel, renewalDate, cancelSubscriptionNow, grantDevPrime }}>
       {children}
     </PrimeContext.Provider>
   );
 }
+
+    

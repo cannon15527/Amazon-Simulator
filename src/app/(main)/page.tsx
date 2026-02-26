@@ -41,7 +41,7 @@ export default function ProductsPage() {
 
 
   const { addFunds, setBalance } = useWallet();
-  const { isPrime, subscribe, cancelSubscriptionNow } = usePrime();
+  const { isPrime, grantDevPrime, cancelSubscriptionNow } = usePrime();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -190,11 +190,9 @@ export default function ProductsPage() {
       cancelSubscriptionNow();
       toast({ title: "Dev Action", description: "Prime membership cancelled." });
     } else {
-      if (subscribe()) {
-        toast({ title: "Dev Action", description: "Prime membership granted." });
-      } else {
-        toast({ variant: "destructive", title: "Dev Action Failed", description: "Could not grant Prime, insufficient funds." });
-      }
+      const devRenewalDate = new Date('2099-12-31T23:59:59Z');
+      grantDevPrime(devRenewalDate);
+      toast({ title: "Dev Action", description: "Prime membership granted until 12/31/2099." });
     }
   };
 
@@ -402,3 +400,4 @@ export default function ProductsPage() {
 
     
 
+    
