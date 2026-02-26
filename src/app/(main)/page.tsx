@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -5,7 +6,7 @@ import { products } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, XCircle, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Search, XCircle, ChevronLeft, ChevronRight, Star, Code, Settings, DollarSign, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import {
   Select,
@@ -15,6 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useWallet } from "@/hooks/use-wallet";
+import { usePrime } from "@/hooks/use-prime";
+import { useToast } from "@/hooks/use-toast";
+import { INITIAL_WALLET_BALANCE } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 
 const PRODUCTS_PER_PAGE = 12;
@@ -28,6 +36,12 @@ export default function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("alpha-asc");
   const [pageInput, setPageInput] = useState(String(currentPage));
+  const [isDevMenuOpen, setIsDevMenuOpen] = useState(false);
+
+  const { addFunds, setBalance } = useWallet();
+  const { isPrime, subscribe, cancelSubscriptionNow } = usePrime();
+  const { toast } = useToast();
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -48,6 +62,13 @@ export default function ProductsPage() {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (searchQuery.toLowerCase() === "dev") {
+      setIsDevMenuOpen(true);
+      setSearchQuery("");
+      return;
+    }
+
     setActiveSearch(searchQuery);
     setSelectedCategory("All"); // Reset category filter on new search
     setCurrentPage(1); // Reset to first page on new search
@@ -139,15 +160,43 @@ export default function ProductsPage() {
       }
   };
 
+  // --- Dev Menu Functions ---
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
+  };
+
+  const handleDevAddFunds = (amount: number) => {
+    addFunds(amount);
+    toast({ title: "Dev Action", description: `${formatCurrency(amount)} added to wallet.` });
+  };
+
+  const handleDevTogglePrime = () => {
+    if (isPrime) {
+      cancelSubscriptionNow();
+      toast({ title: "Dev Action", description: "Prime membership cancelled." });
+    } else {
+      if (subscribe()) {
+        toast({ title: "Dev Action", description: "Prime membership granted." });
+      } else {
+        toast({ variant: "destructive", title: "Dev Action Failed", description: "Could not grant Prime, insufficient funds." });
+      }
+    }
+  };
+
+  const handleDevReset = () => {
+    localStorage.clear();
+    setBalance(INITIAL_WALLET_BALANCE);
+    setIsDevMenuOpen(false);
+    toast({ title: "Dev Action", description: "Full application reset successful." });
+    setTimeout(() => router.push('/signup'), 500);
+  };
+  // --------------------------
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
         <section className="w-full py-4 md:py-6 bg-gradient-to-br from-primary/5 via-background to-background rounded-xl border">
           <div className="container px-4 md:px-6 text-center">
             <div className="flex flex-col items-center space-y-4">
-              <div className="inline-block rounded-lg bg-accent px-3 py-1 text-sm font-semibold text-accent-foreground shadow-sm border">
-                Prime Day Every Day (In 2029)
-              </div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tighter">
                 {userName ? `Welcome back, ${userName}` : 'Imagination, Delivered.'}
               </h1>
@@ -155,11 +204,6 @@ export default function ProductsPage() {
                 Your one-stop shop for things that don't exist. Explore our infinite catalog of virtual wonders.
               </p>
               <div className="flex flex-col gap-3 min-[400px]:flex-row justify-center">
-                <Button asChild size="lg">
-                  <Link href="/prime-deals">
-                    <Star className="mr-2" /> Browse Prime Deals
-                  </Link>
-                </Button>
                  <form onSubmit={handleSearch} className="flex w-full max-w-sm items-center space-x-2">
                     <Input 
                       type="text" 
@@ -298,6 +342,37 @@ export default function ProductsPage() {
                 </Card>
             )}
         </section>
+
+        <Dialog open={isDevMenuOpen} onOpenChange={setIsDevMenuOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2"><Code /> Developer Menu</DialogTitle>
+                    <DialogDescription>Use these controls to manipulate the application state for testing purposes.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6 py-4">
+                    <div className="space-y-3">
+                        <h4 className="font-medium flex items-center gap-2"><DollarSign /> Wallet Controls</h4>
+                        <div className="flex gap-2">
+                            <Button variant="outline" onClick={() => handleDevAddFunds(100000)}>$1,000</Button>
+                            <Button variant="outline" onClick={() => handleDevAddFunds(1000000)}>$10,000</Button>
+                        </div>
+                    </div>
+                    <Separator />
+                    <div className="space-y-3">
+                        <h4 className="font-medium flex items-center gap-2"><Star /> Prime Controls</h4>
+                        <Button variant="outline" onClick={handleDevTogglePrime}>{isPrime ? "Cancel Prime Membership" : "Grant Prime Membership"}</Button>
+                    </div>
+                    <Separator />
+                    <div className="space-y-3 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+                        <h4 className="font-medium flex items-center gap-2 text-destructive"><Trash2 /> Danger Zone</h4>
+                        <p className="text-sm text-destructive/80">This will clear all localStorage data (wallet, cart, orders, etc.) and reset the simulation.</p>
+                        <Button variant="destructive" onClick={handleDevReset}>Reset Application State</Button>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }
+
+    
