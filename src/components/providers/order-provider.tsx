@@ -15,7 +15,7 @@ import { addDays, addHours } from "date-fns";
 
 interface OrderContextType {
   orders: Order[];
-  placeOrder: (
+  addOrder: (
     items: CartItem[],
     total: number,
     shippingAddress: string
@@ -34,7 +34,7 @@ const OrderSchema = z.object({
   orderDate: z.number(),
   estimatedDelivery: z.number(),
   status: z.enum(["Processing", "Shipped", "Delivered"]),
-  shippingAddress: z.string(), // REQUIRED to match Order type
+  shippingAddress: z.string(), // required to match Order
 });
 
 const OrderArraySchema = z.array(OrderSchema);
@@ -68,7 +68,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     }
   }, [orders, isHydrated]);
 
-  const placeOrder = (
+  const addOrder = (
     items: CartItem[],
     total: number,
     shippingAddress: string
@@ -129,7 +129,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   return (
     <OrderContext.Provider
-      value={{ orders, placeOrder, updateOrderStatus }}
+      value={{ orders, addOrder, updateOrderStatus }}
     >
       {children}
     </OrderContext.Provider>
